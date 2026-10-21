@@ -28,15 +28,15 @@ const getSeoulMinutes = () => {
 
 const getSignState = (now) => {
     if (now >= OPEN_MIN && now < CLOSE_MIN - SOON_MIN) {
-        return { open: true, word: 'OPEN', note: '문 열었어요', msg: '지금 문 열려 있어요 · 20시까지 놀러 오세요' };
+        return { open: true, word: 'OPEN', note: '문 열었어요', msg: '지금 문 열려 있어요 · 놀러 오세요' };
     }
     if (now >= CLOSE_MIN - SOON_MIN && now < CLOSE_MIN) {
-        return { open: true, word: 'OPEN', note: '곧 문 닫아요', msg: '곧 문 닫아요 · 20시까지예요' };
+        return { open: true, word: 'OPEN', note: '곧 문 닫아요', msg: '곧 문 닫아요 · 서둘러 오세요' };
     }
     if (now < OPEN_MIN) {
-        return { open: false, word: 'CLOSE', note: '11시에 열어요', msg: '아직 문 열기 전이에요 · 11시에 열어요' };
+        return { open: false, word: 'CLOSE', note: '11시에 열어요', msg: '아직 문 열기 전이에요 · 조금만 기다려 주세요' };
     }
-    return { open: false, word: 'CLOSE', note: '내일 만나요', msg: '오늘은 문 닫았어요 · 내일 11시에 만나요' };
+    return { open: false, word: 'CLOSE', note: '내일 만나요', msg: '오늘은 문 닫았어요 · 내일 만나요' };
 };
 
 const updateShopSign = () => {
@@ -48,7 +48,12 @@ const updateShopSign = () => {
         sign.hidden = false;
     }
     if (msg) {
-        msg.textContent = state.msg;
+        msg.replaceChildren(...state.msg.split(' · ').flatMap((part, i, arr) => {
+            const span = document.createElement('span');
+            span.className = 'nowrap';
+            span.textContent = i < arr.length - 1 ? `${part} ·` : part;
+            return i < arr.length - 1 ? [span, ' '] : [span];
+        }));
         msg.hidden = false;
     }
 };

@@ -392,11 +392,6 @@ ul {
     margin-bottom: var(--gap-s);
 }
 
-.hero__info {
-    font-size: var(--fs-small);
-    color: var(--c-ink-soft);
-}
-
 .hero__top {
     display: flex;
     flex-wrap: wrap;
@@ -502,6 +497,10 @@ ul {
 
 .visit__now {
     color: var(--c-orange);
+}
+
+.nowrap {
+    white-space: nowrap;
 }
 
 .hero__photo {
@@ -644,9 +643,6 @@ ul {
     display: grid;
     gap: 0.2rem;
     margin: auto 0 var(--gap-s);
-    padding: var(--gap-s);
-    background: var(--c-pink-light);
-    border-radius: 12px;
     font-size: var(--fs-small);
 }
 
@@ -1060,6 +1056,14 @@ ul {
         font-size: 0.9375rem;
     }
 
+    .section-lead {
+        font-size: clamp(0.8125rem, 3.6vw, 0.9375rem);
+    }
+
+    .note {
+        font-size: clamp(0.8125rem, 3.7vw, 0.9375rem);
+    }
+
     .goods {
         gap: var(--gap-m);
     }
@@ -1070,22 +1074,17 @@ ul {
     }
 
     .gallery__grid {
-        display: flex;
-        gap: var(--gap-s);
-        margin: 0 calc(var(--page-pad) * -1) var(--gap-m);
-        padding: 0.5rem var(--page-pad) 0.75rem;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-    }
-
-    .gallery__grid::-webkit-scrollbar {
-        display: none;
+        gap: var(--gap-m);
+        justify-items: center;
     }
 
     .gallery__grid .polaroid {
-        flex: 0 0 72%;
-        scroll-snap-align: center;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .gallery__grid .polaroid:nth-child(2) {
+        transform: rotate(2deg);
     }
 
     .visit__info {
@@ -1152,6 +1151,10 @@ ul {
 }
 
 @media (min-width: 720px) {
+    .m-br {
+        display: none;
+    }
+
     :root {
         --page-pad: 2rem;
         --fs-small: 1rem;
