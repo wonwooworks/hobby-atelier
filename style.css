@@ -37,12 +37,12 @@
     --font-title: 'KerisKeduLine', 'SchoolSafetyPictureDiary', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     --font-body: 'SchoolSafetyPictureDiary', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 
-    --fs-small: 1rem;
-    --fs-body: 1.1875rem;
-    --fs-lead: 1.25rem;
-    --fs-h3: 1.5rem;
-    --fs-h2: 1.875rem;
-    --fs-h1: clamp(2.5rem, 10vw, 4.25rem);
+    --fs-small: 0.875rem;
+    --fs-body: 1rem;
+    --fs-lead: 1.0625rem;
+    --fs-h3: 1.25rem;
+    --fs-h2: 1.625rem;
+    --fs-h1: clamp(2.125rem, 9vw, 4.25rem);
 
     --line: 2.5px solid var(--c-ink);
     --line-thin: 2px solid var(--c-ink);
@@ -55,8 +55,8 @@
     --gap-xs: 0.5rem;
     --gap-s: 0.875rem;
     --gap-m: 1.5rem;
-    --gap-l: 2.5rem;
-    --gap-xl: 4.5rem;
+    --gap-l: 2rem;
+    --gap-xl: 3.25rem;
     --page-pad: 1.25rem;
     --max-w: 1120px;
     --header-h: 64px;
@@ -893,6 +893,10 @@ ul {
     margin-top: 0.25rem;
 }
 
+.site-footer a {
+    white-space: nowrap;
+}
+
 .site-footer__name {
     font-family: var(--font-title);
     font-size: 1.5rem;
@@ -948,10 +952,215 @@ ul {
     color: var(--c-white);
 }
 
+@media (max-width: 719px) {
+    .tape {
+        font-size: 0.875rem;
+    }
+
+    .btn {
+        min-height: 48px;
+        padding: 0.65rem 1.1rem;
+        font-size: 1rem;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+    }
+
+    .shop-sign__word {
+        font-size: 1.375rem;
+    }
+
+    .shop-sign__note {
+        font-size: 0.8125rem;
+    }
+
+    .shop-sign__board {
+        min-width: 6.5rem;
+        padding: 0.35rem 0.75rem 0.3rem;
+    }
+
+    .shop-sign__string {
+        width: 76px;
+        height: 18px;
+    }
+
+    .hero {
+        gap: var(--gap-m);
+    }
+
+    .hero__title {
+        margin-bottom: var(--gap-s);
+    }
+
+    .hero__lead {
+        margin-bottom: var(--gap-m);
+    }
+
+    .hero__buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--gap-xs);
+    }
+
+    .hero__buttons .btn {
+        gap: 0.35rem;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+        font-size: clamp(0.8125rem, 3.7vw, 0.9375rem);
+        white-space: nowrap;
+    }
+
+    .hero__photo {
+        max-width: 420px;
+    }
+
+    .paths__list {
+        gap: var(--gap-s);
+    }
+
+    .sticker {
+        padding: var(--gap-s) var(--gap-m);
+        gap: 0;
+    }
+
+    .sticker__go {
+        margin-top: 0.25rem;
+    }
+
+    .class-card__body {
+        padding: var(--gap-s) var(--gap-m) var(--gap-m);
+    }
+
+    .gifts__head {
+        gap: var(--gap-m);
+        margin-bottom: var(--gap-m);
+    }
+
+    .gifts__photo {
+        max-width: 320px;
+    }
+
+    .step {
+        padding: 0.7rem var(--gap-s) 0.7rem 3.5rem;
+    }
+
+    .step::before {
+        width: 2rem;
+        height: 2rem;
+        left: 0.75rem;
+    }
+
+    .step__title {
+        font-size: 1.0625rem;
+    }
+
+    .step__desc,
+    .note {
+        font-size: 0.9375rem;
+    }
+
+    .goods {
+        gap: var(--gap-m);
+    }
+
+    .goods .polaroid {
+        max-width: 360px;
+        justify-self: center;
+    }
+
+    .gallery__grid {
+        display: flex;
+        gap: var(--gap-s);
+        margin: 0 calc(var(--page-pad) * -1) var(--gap-m);
+        padding: 0.5rem var(--page-pad) 0.75rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .gallery__grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gallery__grid .polaroid {
+        flex: 0 0 72%;
+        scroll-snap-align: center;
+    }
+
+    .visit__info {
+        padding: var(--gap-s) var(--gap-m);
+        gap: 0.6rem;
+    }
+
+    .visit__row {
+        grid-template-columns: 4.5em 1fr;
+        gap: var(--gap-xs);
+    }
+
+    .visit__maps .btn {
+        font-size: clamp(0.8125rem, 3.5vw, 0.875rem);
+        white-space: nowrap;
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+    }
+
+    .visit__map {
+        min-height: 240px;
+    }
+
+    .visit__map iframe {
+        min-height: 222px;
+    }
+
+    .contact__title {
+        font-size: 1.125rem;
+    }
+
+    .contact__buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--gap-xs);
+    }
+
+    .contact__item {
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.2rem;
+        padding: 0.6rem 0.25rem;
+        border-radius: var(--radius-m);
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .contact__icon {
+        width: 1.4em;
+        height: 1.4em;
+    }
+
+    .site-footer {
+        font-size: 0.8125rem;
+    }
+
+    .site-footer__name {
+        font-size: 1.25rem;
+    }
+
+    .bottom-bar__item {
+        font-size: 1rem;
+    }
+}
+
 @media (min-width: 720px) {
     :root {
         --page-pad: 2rem;
+        --fs-small: 1rem;
+        --fs-body: 1.1875rem;
+        --fs-lead: 1.25rem;
+        --fs-h3: 1.5rem;
         --fs-h2: 2.125rem;
+        --gap-l: 2.5rem;
+        --gap-xl: 4.5rem;
     }
 
     .paths__list {
