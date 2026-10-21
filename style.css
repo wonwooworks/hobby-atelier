@@ -503,6 +503,21 @@ ul {
     white-space: nowrap;
 }
 
+.pc-br {
+    display: none;
+}
+
+.map-pin {
+    width: 1.25em;
+    height: 1.25em;
+    flex-shrink: 0;
+}
+
+.map-pin path {
+    stroke: var(--c-ink);
+    stroke-width: 1.5;
+}
+
 .hero__photo {
     max-width: 560px;
     width: 100%;
@@ -1028,6 +1043,10 @@ ul {
         padding: var(--gap-s) var(--gap-m) var(--gap-m);
     }
 
+    .class-card__desc {
+        font-size: clamp(0.8125rem, 3.6vw, 0.9375rem);
+    }
+
     .gifts__head {
         gap: var(--gap-m);
         margin-bottom: var(--gap-m);
@@ -1155,6 +1174,10 @@ ul {
         display: none;
     }
 
+    .pc-br {
+        display: inline;
+    }
+
     :root {
         --page-pad: 2rem;
         --fs-small: 1rem;
@@ -1193,6 +1216,7 @@ ul {
     :root {
         --header-h: 76px;
         --bar-space: 0px;
+        --max-w: 1200px;
     }
 
     body {
@@ -1248,8 +1272,30 @@ ul {
     }
 
     .gifts__head {
-        grid-template-columns: 1.3fr 1fr;
+        grid-template-columns: minmax(0, 1fr) 300px;
         align-items: center;
+    }
+
+    .gifts__intro .section-lead {
+        max-width: none;
+        font-size: 1.125rem;
+    }
+
+    .class-card__desc {
+        font-size: 1rem;
+    }
+
+    .class-card__photo {
+        aspect-ratio: 3 / 2;
+    }
+
+    .screen__inner>.section-lead {
+        margin-bottom: var(--gap-s);
+    }
+
+    .screen {
+        padding-top: var(--gap-m);
+        padding-bottom: var(--gap-m);
     }
 
     .gifts__head {
