@@ -62,3 +62,47 @@ if (sign || msg) {
     updateShopSign();
     setInterval(updateShopSign, 60000);
 }
+
+const topBear = document.querySelector('[data-top-bear]');
+
+if (topBear) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const toggleBear = () => {
+        if (topBear.classList.contains('is-flying')) return;
+        topBear.classList.toggle('is-visible', window.scrollY > window.innerHeight * 0.8);
+    };
+
+    window.addEventListener('scroll', toggleBear, { passive: true });
+    toggleBear();
+
+    topBear.addEventListener('click', () => {
+        if (reduceMotion.matches) {
+            topBear.classList.remove('is-visible');
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            return;
+        }
+        topBear.classList.add('is-flying');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    topBear.addEventListener('animationend', (event) => {
+        if (event.animationName !== 'bear-fly') return;
+        topBear.classList.remove('is-flying', 'is-visible');
+        toggleBear();
+    });
+}
+
+const bearBlockers = document.querySelectorAll('.contact__buttons, .site-footer');
+
+if (topBear && bearBlockers.length && 'IntersectionObserver' in window) {
+    const visibleBlockers = new Set();
+    const mobile = window.matchMedia('(max-width: 999px)');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) visibleBlockers.add(entry.target);
+            else visibleBlockers.delete(entry.target);
+        });
+        topBear.classList.toggle('is-tucked', mobile.matches && visibleBlockers.size > 0);
+    });
+    bearBlockers.forEach((el) => observer.observe(el));
+}

@@ -1,4 +1,11 @@
 @font-face {
+    font-family: 'SchoolSafetyPictureDiary';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimGeurimilgiTTF-R.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
     font-family: 'KerisKeduLine';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-3@1.0/KERISKEDU_Line.woff2') format('woff2');
     font-weight: normal;
@@ -492,7 +499,8 @@ ul {
     }
 }
 
-.visit__now {
+.visit__now,
+.visit__tip {
     color: var(--c-orange);
 }
 
@@ -506,12 +514,10 @@ ul {
     filter: saturate(0.86) contrast(0.96) brightness(1.03) sepia(0.06);
 }
 
-.btn,
 .sticker__title,
 .class-card__title,
 .step__title,
 .contact__title,
-.bottom-bar__item,
 .site-nav a {
     font-weight: 700;
 }
@@ -798,7 +804,7 @@ ul {
 .visit {
     display: grid;
     gap: var(--gap-m);
-    margin-bottom: var(--gap-l);
+    margin-bottom: var(--gap-xl);
 }
 
 .visit__left {
@@ -843,7 +849,6 @@ ul {
 
 .visit__map {
     display: flex;
-    min-height: 280px;
     padding: 8px;
     background: var(--c-white);
     border: var(--line);
@@ -851,13 +856,130 @@ ul {
     box-shadow: var(--depth);
 }
 
-.visit__map iframe {
-    flex: 1;
+.visit__map-link {
+    display: block;
+    transition: opacity 0.2s ease;
     width: 100%;
-    min-height: 262px;
-    border: 0;
+    text-decoration: none;
+}
+
+.visit__map-link:hover {
+    opacity: 0.85;
+}
+
+.mini-map {
+    display: block;
+    width: 100%;
+    height: auto;
     border-radius: calc(var(--radius-m) - 8px);
 }
+
+.mm-bg {
+    fill: #FFFEFB;
+}
+
+.mm-line,
+.mm-line * {
+    fill: none;
+    stroke: #3B3330;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.mm-dash {
+    fill: none;
+    stroke: #3B3330;
+    stroke-width: 1.4;
+    stroke-dasharray: 6 6;
+    stroke-linecap: round;
+}
+
+.mm-text text,
+.mm-shop-name,
+.mm-shop-sign-text {
+    font-family: 'SchoolSafetyPictureDiary', var(--font-body);
+    fill: #3B3330;
+}
+
+.mm-text text {
+    font-size: 16px;
+}
+
+.mm-text .mm-text--s {
+    font-size: 13.5px;
+}
+
+.mm-icon rect,
+.mm-icon circle {
+    fill: none;
+    stroke: #3B3330;
+    stroke-width: 1.4;
+}
+
+.mm-icon text {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 800;
+    fill: #3B3330;
+}
+
+.mm-icon .mm-pink {
+    fill: #E8A0A8;
+    stroke: none;
+}
+
+.mm-icon .mm-p-pick {
+    fill: #F3E2B8;
+}
+
+.mm-tree path {
+    fill: #CFE0C3;
+    stroke: #3B3330;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+}
+
+.mm-tree-fill {
+    fill: #CFE0C3;
+    stroke: #3B3330;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+}
+
+.mm-shop-wall,
+.mm-shop-door,
+.mm-shop-win {
+    fill: #FFFEFB;
+    stroke: #3B3330;
+    stroke-width: 1.5;
+}
+
+.mm-shop-win {
+    fill: #E4EEF2;
+}
+
+.mm-shop-sign {
+    fill: #F2C4CA;
+    stroke: #3B3330;
+    stroke-width: 1.5;
+}
+
+.mm-shop-sign-text {
+    font-size: 9px;
+}
+
+.mm-shop-awning {
+    fill: #E8A0A8;
+    stroke: #3B3330;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+}
+
+.mm-shop-name {
+    font-size: 20px;
+}
+
 
 .contact {
     text-align: center;
@@ -1000,6 +1122,12 @@ ul {
     opacity: 1;
     transform: none;
     pointer-events: auto;
+}
+
+.top-bear.is-visible.is-tucked {
+    opacity: 0;
+    transform: translateY(24px);
+    pointer-events: none;
 }
 
 .top-bear.is-flying {
@@ -1277,12 +1405,16 @@ ul {
         padding-right: 0.4rem;
     }
 
-    .visit__map {
-        min-height: 240px;
+    .mm-text text {
+        font-size: 17px;
     }
 
-    .visit__map iframe {
-        min-height: 222px;
+    .mm-text .mm-text--s {
+        font-size: 14.5px;
+    }
+
+    .mm-shop-name {
+        font-size: 22px;
     }
 
     .contact__title {
@@ -1361,7 +1493,17 @@ ul {
     }
 
     .visit {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .visit__left {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .visit__info {
+        flex: 1;
+        align-content: center;
     }
 
     .gallery__grid {
