@@ -83,6 +83,34 @@ window.addEventListener('hashchange', () => {
 
 if (modals.has(location.hash.slice(1))) openModal(location.hash.slice(1), false);
 
+const classModal = document.getElementById('classes');
+
+if (classModal) {
+    const main = classModal.querySelector('[data-detail-main]');
+    const panels = classModal.querySelectorAll('[data-detail-panel]');
+    const inner = classModal.querySelector('.modal__inner');
+    const showMain = () => {
+        panels.forEach((panel) => { panel.hidden = true; });
+        main.hidden = false;
+    };
+    classModal.querySelectorAll('[data-detail]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            main.hidden = true;
+            panels.forEach((panel) => { panel.hidden = panel.dataset.detailPanel !== btn.dataset.detail; });
+            inner.scrollTop = 0;
+            const back = classModal.querySelector(`[data-detail-panel="${btn.dataset.detail}"] [data-detail-back]`);
+            if (back) back.focus({ preventScroll: true });
+        });
+    });
+    classModal.querySelectorAll('[data-detail-back]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            showMain();
+            inner.scrollTop = 0;
+        });
+    });
+    classModal.addEventListener('close', showMain);
+}
+
 const paintLayer = document.querySelector('.paint-layer');
 const canPaint = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;

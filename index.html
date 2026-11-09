@@ -22,7 +22,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-    <link rel="stylesheet" href="style.css?v=1113">
+    <link rel="stylesheet" href="style.css?v=1115">
 </head>
 
 <body>
@@ -255,19 +255,83 @@
                     aria-hidden="true">
                     <path d="M6 6 L18 18 M18 6 L6 18" />
                 </svg></button>
-            <h2 class="modal__title" id="classes-title">원데이클래스</h2>
-            <p class="modal__lead">처음이어도 괜찮아요. 차근차근 알려드려요.</p>
-            <ul class="modal__grid modal__grid--3">
-                <li class="modal__item"><img src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제" loading="lazy"><span>디자인
-                        석고방향제</span></li>
-                <li class="modal__item"><img src="images/moru.jpg" alt="한옥 담장 앞에 걸린 모루 꽃 썬캐쳐" loading="lazy"><span>모루
-                        플라워 썬캐쳐</span></li>
-                <li class="modal__item"><img src="images/beads.jpg" alt="진주와 하트 비즈로 만든 스트랩" loading="lazy"><span>구슬구슬
-                        비즈스트랩</span></li>
-            </ul>
-            <a class="btn btn--primary btn--block" href="https://m.booking.naver.com/booking/6/bizes/215117"
-                target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>네이버 예약에서 일정 보기</a>
-            <p class="modal__note">일정과 가격은 예약 페이지에서 확인할 수 있어요.</p>
+            <div class="class-main" data-detail-main>
+                <h2 class="modal__title" id="classes-title">원데이클래스</h2>
+                <p class="modal__lead">석고방향제, 캔들, 비즈 공예까지<br class="m-br"> 그때그때 다양한 클래스가 열려요.<br>처음이어도 괜찮아요, 차근차근 알려드려요.
+                </p>
+                <ul class="modal__grid modal__grid--3">
+                    <li><button class="modal__item modal__item--button" type="button" data-detail="plaster"><img
+                                src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제" loading="lazy"><span>석고방향제<span
+                                    class="modal__more">자세히</span></span></button></li>
+                    <li><button class="modal__item modal__item--button" type="button" data-detail="suncatcher"><img
+                                src="images/moru.jpg" alt="한옥 담장 앞에 걸린 모루 꽃 썬캐쳐" loading="lazy"><span>썬캐쳐<span
+                                    class="modal__more">자세히</span></span></button></li>
+                    <li><button class="modal__item modal__item--button" type="button" data-detail="beads"><img
+                                src="images/beads.jpg" alt="진주와 하트 비즈로 만든 스트랩" loading="lazy"><span>비즈 공예<span
+                                    class="modal__more">자세히</span></span></button></li>
+                </ul>
+                <a class="btn btn--primary btn--block" href="https://m.booking.naver.com/booking/6/bizes/215117"
+                    target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>지금 진행 중인 클래스 보러
+                    가기</a>
+                <p class="modal__note">클래스 종류와 일정, 가격은 네이버 예약에서 확인할 수 있어요.</p>
+            </div>
+
+            <div class="class-detail" data-detail-panel="plaster" hidden>
+                <button class="class-detail__back" type="button" data-detail-back>원데이클래스 전체 보기</button>
+                <h3 class="class-detail__title">석고방향제</h3>
+                <p class="modal__lead">캐릭터 모양 석고에 직접 색을 칠하고,<br class="m-br"> 좋아하는 향을 입혀 나만의 방향제를 완성해요.</p>
+                <div class="class-detail__photos class-detail__photos--3">
+                    <img src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제" loading="lazy">
+                    <img src="images/hero.jpg" alt="튜브와 선글라스로 꾸민 여름 강아지 석고방향제" loading="lazy">
+                    <img src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고" loading="lazy">
+                </div>
+                <ul class="class-detail__points">
+                    <li>수백 가지 몰드 중에서 마음에 드는 모양을 골라요</li>
+                    <li>물감으로 자유롭게 색을 입혀요</li>
+                    <li>완성한 방향제는 옷장, 차, 책상 어디에 두어도 좋아요</li>
+                </ul>
+                <a class="btn btn--primary btn--block" href="https://m.booking.naver.com/booking/6/bizes/215117"
+                    target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>지금 진행 중인 클래스 보러
+                    가기</a>
+                <p class="modal__note">클래스 종류와 일정, 가격은 네이버 예약에서 확인할 수 있어요.</p>
+            </div>
+
+            <div class="class-detail" data-detail-panel="suncatcher" hidden>
+                <button class="class-detail__back" type="button" data-detail-back>원데이클래스 전체 보기</button>
+                <h3 class="class-detail__title">썬캐쳐</h3>
+                <p class="modal__lead">모루로 꽃을 만들고 반짝이는 구슬을 꿰어,<br class="m-br"> 창가에 거는 썬캐쳐를 완성해요.</p>
+                <div class="class-detail__photos class-detail__photos--2">
+                    <img src="images/moru-full.jpg" alt="한옥 담장 앞에 길게 걸린 모루 꽃 썬캐쳐" loading="lazy">
+                    <img src="images/moru.jpg" alt="모루 꽃과 투명 구슬 확대 모습" loading="lazy">
+                </div>
+                <ul class="class-detail__points">
+                    <li>알록달록 다양한 색으로 준비되어 있는 모루로 나만의 꽃 모양을 잡아요</li>
+                    <li>반짝이는 크리스탈로 장식해요</li>
+                    <li>햇빛을 받으면 방 안에 무지개가 반짝여요</li>
+                </ul>
+                <a class="btn btn--primary btn--block" href="https://m.booking.naver.com/booking/6/bizes/215117"
+                    target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>지금 진행 중인 클래스 보러
+                    가기</a>
+                <p class="modal__note">클래스 종류와 일정, 가격은 네이버 예약에서 확인할 수 있어요.</p>
+            </div>
+
+            <div class="class-detail" data-detail-panel="beads" hidden>
+                <button class="class-detail__back" type="button" data-detail-back>원데이클래스 전체 보기</button>
+                <h3 class="class-detail__title">비즈 공예</h3>
+                <p class="modal__lead">좋아하는 색의 구슬을 골라,<br class="m-br"> 휴대폰이나 가방에 다는 스트랩을 만들어요.</p>
+                <div class="class-detail__photos class-detail__photos--1">
+                    <img src="images/beads.jpg" alt="진주와 오로라 구슬, 하트 비즈로 만든 스트랩" loading="lazy">
+                </div>
+                <ul class="class-detail__points">
+                    <li>원하는 구슬과 꾸밈재료를 골라서 나만의 스트랩을 만들어요</li>
+                    <li>길이와 배열을 자유롭게 정해요</li>
+                    <li>폰스트랩이나 키링 등 다양한 쓰임으로 만들어요</li>
+                </ul>
+                <a class="btn btn--primary btn--block" href="https://m.booking.naver.com/booking/6/bizes/215117"
+                    target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>지금 진행 중인 클래스 보러
+                    가기</a>
+                <p class="modal__note">클래스 종류와 일정, 가격은 네이버 예약에서 확인할 수 있어요.</p>
+            </div>
         </div>
     </dialog>
 
@@ -285,6 +349,7 @@
                 <li class="modal__item"><img src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고" loading="lazy"><span>웨딩·생일
                         기념 석고</span></li>
             </ul>
+            <p class="modal__flow-title">주문은 이렇게 진행돼요</p>
             <ol class="modal__flow">
                 <li>카톡 문의</li>
                 <li>디자인 상담</li>
@@ -361,10 +426,12 @@
     <nav class="bottom-bar" aria-label="빠른 연락">
         <a class="bottom-bar__item bottom-bar__item--book" href="https://m.booking.naver.com/booking/6/bizes/215117"
             target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>네이버 예약</a>
-        <a class="bottom-bar__item" href="tel:050713208737"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true">
-                <path class="ico-fill"
-                    d="M6.6 3.5h3l1.5 4-2 1.3a11 11 0 0 0 6.1 6.1l1.3-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" />
-            </svg>전화</a>
+        <a class="bottom-bar__item" href="https://ig.me/m/hobby_atelier._.je" target="_blank" rel="noopener"><svg
+                class="ico" viewBox="0 0 24 24" aria-hidden="true">
+                <rect class="ico-line" x="3.5" y="3.5" width="17" height="17" rx="5" />
+                <circle class="ico-line" cx="12" cy="12" r="4" />
+                <circle class="ico-fill" cx="17.2" cy="6.8" r="1.1" />
+            </svg>DM</a>
         <a class="bottom-bar__item" href="http://pf.kakao.com/_vxehwj/chat" target="_blank" rel="noopener"><svg
                 class="ico" viewBox="0 0 24 24" aria-hidden="true">
                 <path class="ico-fill"
@@ -374,7 +441,7 @@
 
     <button class="to-top" type="button" aria-label="맨 위로 이동" data-to-top>TOP</button>
 
-    <script src="main.js?v=1113"></script>
+    <script src="main.js?v=1115"></script>
 </body>
 
 </html>
