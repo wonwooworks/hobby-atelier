@@ -26,9 +26,25 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 
 const modals = new Map([...document.querySelectorAll('dialog.modal')].map((el) => [el.id, el]));
 const root = document.documentElement;
+const lightbox = document.querySelector('.lightbox');
+const classModal = document.getElementById('classes');
 let navOpened = null;
+let detailPushed = false;
+let lightboxPushed = false;
+let clearAfterPop = false;
 
 const clearHash = () => history.replaceState(null, '', location.pathname + location.search);
+const anyModalOpen = () => [...modals.values()].some((el) => el.open);
+
+const showClassMain = () => {
+    if (!classModal) return;
+    classModal.querySelectorAll('[data-detail-panel]').forEach((panel) => { panel.hidden = true; });
+    classModal.querySelector('[data-detail-main]').hidden = false;
+    classModal.querySelector('.modal__inner').scrollTop = 0;
+};
+
+const isDetailOpen = () => Boolean(classModal && classModal.open
+    && classModal.querySelector('[data-detail-main]').hidden);
 
 const openModal = (id, fromNav) => {
     const dialog = modals.get(id);
@@ -42,11 +58,15 @@ const openModal = (id, fromNav) => {
 
 modals.forEach((dialog) => {
     dialog.addEventListener('close', () => {
-        if (![...modals.values()].some((el) => el.open)) root.classList.remove('modal-open');
+        if (!anyModalOpen()) root.classList.remove('modal-open');
+        if (dialog === classModal) showClassMain();
         if (location.hash === `#${dialog.id}`) {
-            if (navOpened === dialog) history.back();
+            const steps = (navOpened === dialog ? 1 : 0) + (dialog === classModal && detailPushed ? 1 : 0);
+            if (navOpened !== dialog) clearAfterPop = steps > 0;
+            if (steps > 0) history.go(-steps);
             else clearHash();
         }
+        if (dialog === classModal) detailPushed = false;
         if (navOpened === dialog) navOpened = null;
     });
     dialog.addEventListener('click', (event) => {
@@ -55,6 +75,73 @@ modals.forEach((dialog) => {
     dialog.querySelectorAll('[data-modal-close]').forEach((btn) => {
         btn.addEventListener('click', () => dialog.close());
     });
+});
+
+if (classModal) {
+    const main = classModal.querySelector('[data-detail-main]');
+    const panels = classModal.querySelectorAll('[data-detail-panel]');
+    classModal.querySelectorAll('[data-detail]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            main.hidden = true;
+            panels.forEach((panel) => { panel.hidden = panel.dataset.detailPanel !== btn.dataset.detail; });
+            classModal.querySelector('.modal__inner').scrollTop = 0;
+            history.pushState({ layer: 'detail' }, '', location.hash || '#classes');
+            detailPushed = true;
+            const back = classModal.querySelector(`[data-detail-panel="${btn.dataset.detail}"] [data-detail-back]`);
+            if (back) back.focus({ preventScroll: true });
+        });
+    });
+    classModal.querySelectorAll('[data-detail-back]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            if (detailPushed) history.back();
+            else showClassMain();
+        });
+    });
+}
+
+if (lightbox) {
+    const img = lightbox.querySelector('.lightbox__img');
+    const caption = lightbox.querySelector('.lightbox__caption');
+    document.querySelectorAll('[data-zoom]').forEach((photo) => {
+        photo.addEventListener('click', () => {
+            img.src = photo.currentSrc || photo.src;
+            img.alt = photo.alt;
+            const label = photo.closest('.modal__item');
+            caption.textContent = label ? label.textContent.trim() : '';
+            lightbox.showModal();
+            history.pushState({ layer: 'lightbox' }, '', location.hash);
+            lightboxPushed = true;
+        });
+    });
+    const closeLightbox = () => {
+        if (lightboxPushed) history.back();
+        else lightbox.close();
+    };
+    lightbox.querySelector('[data-lightbox-close]').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox || event.target.classList.contains('lightbox__figure')) closeLightbox();
+    });
+    lightbox.addEventListener('cancel', (event) => {
+        event.preventDefault();
+        closeLightbox();
+    });
+}
+
+window.addEventListener('popstate', () => {
+    if (lightbox && lightbox.open) {
+        lightboxPushed = false;
+        lightbox.close();
+        return;
+    }
+    if (isDetailOpen()) {
+        detailPushed = false;
+        showClassMain();
+        return;
+    }
+    if (clearAfterPop) {
+        clearAfterPop = false;
+        clearHash();
+    }
 });
 
 document.addEventListener('click', (event) => {
@@ -72,9 +159,11 @@ window.addEventListener('hashchange', () => {
     if (modals.has(id)) {
         openModal(id, true);
     } else {
+        if (lightbox && lightbox.open) lightbox.close();
         modals.forEach((el) => {
             if (el.open) {
                 navOpened = null;
+                detailPushed = false;
                 el.close();
             }
         });
@@ -82,34 +171,6 @@ window.addEventListener('hashchange', () => {
 });
 
 if (modals.has(location.hash.slice(1))) openModal(location.hash.slice(1), false);
-
-const classModal = document.getElementById('classes');
-
-if (classModal) {
-    const main = classModal.querySelector('[data-detail-main]');
-    const panels = classModal.querySelectorAll('[data-detail-panel]');
-    const inner = classModal.querySelector('.modal__inner');
-    const showMain = () => {
-        panels.forEach((panel) => { panel.hidden = true; });
-        main.hidden = false;
-    };
-    classModal.querySelectorAll('[data-detail]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            main.hidden = true;
-            panels.forEach((panel) => { panel.hidden = panel.dataset.detailPanel !== btn.dataset.detail; });
-            inner.scrollTop = 0;
-            const back = classModal.querySelector(`[data-detail-panel="${btn.dataset.detail}"] [data-detail-back]`);
-            if (back) back.focus({ preventScroll: true });
-        });
-    });
-    classModal.querySelectorAll('[data-detail-back]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            showMain();
-            inner.scrollTop = 0;
-        });
-    });
-    classModal.addEventListener('close', showMain);
-}
 
 const paintLayer = document.querySelector('.paint-layer');
 const canPaint = window.matchMedia('(hover: hover) and (pointer: fine)').matches

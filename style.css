@@ -796,19 +796,22 @@ strong {
     transition: transform 0.25s ease;
 }
 
-.modal__item--button>span {
+.modal__hint {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: var(--gap-xs);
+    gap: 0.35rem;
+    margin: calc(var(--gap-s) * -1) 0 var(--gap-xs);
+    font-size: 0.8125rem;
+    color: var(--c-ink-soft);
 }
 
-.modal__more {
-    padding: 0.1rem 0.6rem;
-    border-radius: var(--radius-pill);
-    background: var(--c-brand);
-    font-size: 0.75rem;
-    font-weight: 600;
+.modal__hint::before {
+    content: "";
+    width: 0.45em;
+    height: 0.45em;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg) translateY(-2px);
 }
 
 .class-detail[hidden],
@@ -879,6 +882,83 @@ strong {
 
 .class-detail__photos--1 img {
     aspect-ratio: 16 / 10;
+}
+
+.class-detail__photos--tall img {
+    aspect-ratio: 3 / 4;
+}
+
+[data-zoom] {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: hidden;
+}
+
+.lightbox::backdrop {
+    background: rgba(20, 16, 34, 0.88);
+}
+
+.lightbox[open] {
+    display: grid;
+    place-items: center;
+    animation: modal-in 0.2s ease-out;
+}
+
+.lightbox__figure {
+    display: grid;
+    justify-items: center;
+    gap: var(--gap-s);
+    max-width: calc(100vw - 32px);
+}
+
+.lightbox__img {
+    max-width: 100%;
+    max-height: calc(100svh - 140px);
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-s);
+    object-fit: contain;
+}
+
+.lightbox__caption {
+    color: var(--c-white);
+    font-size: var(--fs-small);
+    text-align: center;
+}
+
+.lightbox__close {
+    position: fixed;
+    top: calc(14px + env(safe-area-inset-top, 0px));
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    cursor: pointer;
+}
+
+.lightbox__close svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--c-white);
+    stroke-width: 2;
+    stroke-linecap: round;
 }
 
 .class-detail__points {
@@ -1162,6 +1242,15 @@ strong {
     .class-detail__photos--3 img:first-child {
         grid-column: 1 / -1;
         aspect-ratio: 16 / 10;
+    }
+
+    .class-detail__photos--tall {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .class-detail__photos--tall img:first-child {
+        grid-column: auto;
+        aspect-ratio: 3 / 4;
     }
 
     .mm-text text {

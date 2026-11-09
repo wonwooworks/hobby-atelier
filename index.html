@@ -22,7 +22,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-    <link rel="stylesheet" href="style.css?v=1115">
+    <link rel="stylesheet" href="style.css?v=1117">
 </head>
 
 <body>
@@ -259,16 +259,17 @@
                 <h2 class="modal__title" id="classes-title">원데이클래스</h2>
                 <p class="modal__lead">석고방향제, 캔들, 비즈 공예까지<br class="m-br"> 그때그때 다양한 클래스가 열려요.<br>처음이어도 괜찮아요, 차근차근 알려드려요.
                 </p>
+                <p class="modal__hint">사진을 누르면 자세히 볼 수 있어요.</p>
                 <ul class="modal__grid modal__grid--3">
                     <li><button class="modal__item modal__item--button" type="button" data-detail="plaster"><img
-                                src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제" loading="lazy"><span>석고방향제<span
-                                    class="modal__more">자세히</span></span></button></li>
+                                src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제"
+                                loading="lazy"><span>석고방향제</span></button></li>
                     <li><button class="modal__item modal__item--button" type="button" data-detail="suncatcher"><img
-                                src="images/moru.jpg" alt="한옥 담장 앞에 걸린 모루 꽃 썬캐쳐" loading="lazy"><span>썬캐쳐<span
-                                    class="modal__more">자세히</span></span></button></li>
+                                src="images/moru.jpg" alt="한옥 담장 앞에 걸린 모루 꽃 썬캐쳐"
+                                loading="lazy"><span>썬캐쳐</span></button></li>
                     <li><button class="modal__item modal__item--button" type="button" data-detail="beads"><img
-                                src="images/beads.jpg" alt="진주와 하트 비즈로 만든 스트랩" loading="lazy"><span>비즈 공예<span
-                                    class="modal__more">자세히</span></span></button></li>
+                                src="images/beads.jpg" alt="진주와 하트 비즈로 만든 스트랩" loading="lazy"><span>비즈
+                                공예</span></button></li>
                 </ul>
                 <a class="btn btn--primary btn--block" href="https://m.booking.naver.com/booking/6/bizes/215117"
                     target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>지금 진행 중인 클래스 보러
@@ -281,9 +282,9 @@
                 <h3 class="class-detail__title">석고방향제</h3>
                 <p class="modal__lead">캐릭터 모양 석고에 직접 색을 칠하고,<br class="m-br"> 좋아하는 향을 입혀 나만의 방향제를 완성해요.</p>
                 <div class="class-detail__photos class-detail__photos--3">
-                    <img src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제" loading="lazy">
-                    <img src="images/hero.jpg" alt="튜브와 선글라스로 꾸민 여름 강아지 석고방향제" loading="lazy">
-                    <img src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고" loading="lazy">
+                    <img data-zoom src="images/plaster.jpg" alt="동물 캐릭터 모양 석고방향제" loading="lazy">
+                    <img data-zoom src="images/hero.jpg" alt="튜브와 선글라스로 꾸민 여름 강아지 석고방향제" loading="lazy">
+                    <img data-zoom src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고" loading="lazy">
                 </div>
                 <ul class="class-detail__points">
                     <li>수백 가지 몰드 중에서 마음에 드는 모양을 골라요</li>
@@ -300,9 +301,10 @@
                 <button class="class-detail__back" type="button" data-detail-back>원데이클래스 전체 보기</button>
                 <h3 class="class-detail__title">썬캐쳐</h3>
                 <p class="modal__lead">모루로 꽃을 만들고 반짝이는 구슬을 꿰어,<br class="m-br"> 창가에 거는 썬캐쳐를 완성해요.</p>
-                <div class="class-detail__photos class-detail__photos--2">
-                    <img src="images/moru-full.jpg" alt="한옥 담장 앞에 길게 걸린 모루 꽃 썬캐쳐" loading="lazy">
-                    <img src="images/moru.jpg" alt="모루 꽃과 투명 구슬 확대 모습" loading="lazy">
+                <div class="class-detail__photos class-detail__photos--3 class-detail__photos--tall">
+                    <img data-zoom src="images/moru-full.jpg" alt="한옥 담장 앞에 길게 걸린 주황 모루 꽃 썬캐쳐" loading="lazy">
+                    <img data-zoom src="images/sun1.jpg" alt="나무 아래 걸린 보라색 모루 꽃 썬캐쳐" loading="lazy">
+                    <img data-zoom src="images/sun2.jpg" alt="초록 나뭇잎 사이에 걸린 주황·흰색 모루 꽃 썬캐쳐" loading="lazy">
                 </div>
                 <ul class="class-detail__points">
                     <li>알록달록 다양한 색으로 준비되어 있는 모루로 나만의 꽃 모양을 잡아요</li>
@@ -319,8 +321,10 @@
                 <button class="class-detail__back" type="button" data-detail-back>원데이클래스 전체 보기</button>
                 <h3 class="class-detail__title">비즈 공예</h3>
                 <p class="modal__lead">좋아하는 색의 구슬을 골라,<br class="m-br"> 휴대폰이나 가방에 다는 스트랩을 만들어요.</p>
-                <div class="class-detail__photos class-detail__photos--1">
-                    <img src="images/beads.jpg" alt="진주와 오로라 구슬, 하트 비즈로 만든 스트랩" loading="lazy">
+                <div class="class-detail__photos class-detail__photos--3">
+                    <img data-zoom src="images/beads.jpg" alt="진주와 오로라 구슬, 하트 비즈로 만든 스트랩" loading="lazy">
+                    <img data-zoom src="images/beads1.jpg" alt="진주와 초록 클로버 비즈로 만든 스트랩" loading="lazy">
+                    <img data-zoom src="images/beads2.jpg" alt="파스텔 구슬과 리본, 하트 비즈로 만든 스트랩" loading="lazy">
                 </div>
                 <ul class="class-detail__points">
                     <li>원하는 구슬과 꾸밈재료를 골라서 나만의 스트랩을 만들어요</li>
@@ -344,10 +348,10 @@
             <h2 class="modal__title" id="gifts-title">답례품·단체 주문</h2>
             <p class="modal__lead">돌잔치, 결혼식, 회사 행사처럼<br class="m-br"> 마음을 전하는 자리의 선물을 만들어요.</p>
             <ul class="modal__grid">
-                <li class="modal__item"><img src="images/gift.jpg" alt="투명 상자에 포장한 엄마 곰과 아기 곰 석고 답례품"
+                <li class="modal__item"><img data-zoom src="images/gift.jpg" alt="투명 상자에 포장한 엄마 곰과 아기 곰 석고 답례품"
                         loading="lazy"><span>곰돌이 답례품</span></li>
-                <li class="modal__item"><img src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고" loading="lazy"><span>웨딩·생일
-                        기념 석고</span></li>
+                <li class="modal__item"><img data-zoom src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고"
+                        loading="lazy"><span>웨딩·생일 기념 석고</span></li>
             </ul>
             <p class="modal__flow-title">주문은 이렇게 진행돼요</p>
             <ol class="modal__flow">
@@ -373,10 +377,10 @@
             <h2 class="modal__title" id="goods-title">나만의 굿즈</h2>
             <p class="modal__lead">원하는 그림이나 캐릭터로<br class="m-br"> 하나뿐인 굿즈를 만들어요.</p>
             <ul class="modal__grid">
-                <li class="modal__item"><img src="images/goods.jpg" alt="수원화성과 열기구 풍경을 색칠한 석고 굿즈"
+                <li class="modal__item"><img data-zoom src="images/goods.jpg" alt="수원화성과 열기구 풍경을 색칠한 석고 굿즈"
                         loading="lazy"><span>수원화성 석고 굿즈</span></li>
-                <li class="modal__item"><img src="images/made3.jpg" alt="멜빵바지와 잠옷을 입은 곰돌이 석고" loading="lazy"><span>옷 입은
-                        곰돌이</span></li>
+                <li class="modal__item"><img data-zoom src="images/made3.jpg" alt="멜빵바지와 잠옷을 입은 곰돌이 석고"
+                        loading="lazy"><span>옷 입은 곰돌이</span></li>
             </ul>
             <a class="btn btn--primary btn--block" href="http://pf.kakao.com/_vxehwj/chat" target="_blank"
                 rel="noopener"><svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -396,14 +400,14 @@
             <h2 class="modal__title" id="works-title">작품 구경</h2>
             <p class="modal__lead">공방에서 만든 작품들이에요.</p>
             <ul class="modal__grid modal__grid--4">
-                <li class="modal__item"><img src="images/hero.jpg" alt="튜브와 선글라스로 꾸민 여름 강아지 석고방향제"
+                <li class="modal__item"><img data-zoom src="images/hero.jpg" alt="튜브와 선글라스로 꾸민 여름 강아지 석고방향제"
                         loading="lazy"><span>여름 강아지 석고</span></li>
-                <li class="modal__item"><img src="images/made2.jpg" alt="꽃 장식 유리 캔들과 겨울 캐릭터 석고" loading="lazy"><span>플라워
-                        캔들</span></li>
-                <li class="modal__item"><img src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고" loading="lazy"><span>웨딩·생일
-                        기념 석고</span></li>
-                <li class="modal__item"><img src="images/made3.jpg" alt="옷 입은 곰돌이 석고" loading="lazy"><span>옷 입은
-                        곰돌이</span></li>
+                <li class="modal__item"><img data-zoom src="images/made2.jpg" alt="꽃 장식 유리 캔들과 겨울 캐릭터 석고"
+                        loading="lazy"><span>플라워 캔들</span></li>
+                <li class="modal__item"><img data-zoom src="images/made1.jpg" alt="웨딩 커플과 생일 케이크 모양 석고"
+                        loading="lazy"><span>웨딩·생일 기념 석고</span></li>
+                <li class="modal__item"><img data-zoom src="images/made3.jpg" alt="옷 입은 곰돌이 석고" loading="lazy"><span>옷
+                        입은 곰돌이</span></li>
             </ul>
             <a class="btn btn--primary btn--block" href="https://www.instagram.com/hobby_atelier._.je/" target="_blank"
                 rel="noopener"><svg class="btn__icon btn__icon--line" viewBox="0 0 24 24" aria-hidden="true">
@@ -412,6 +416,17 @@
                     <circle class="dot" cx="17.2" cy="6.8" r="1.1" />
                 </svg>인스타그램에서 더 보기</a>
         </div>
+    </dialog>
+
+    <dialog class="lightbox" aria-label="사진 크게 보기">
+        <button class="lightbox__close" type="button" data-lightbox-close aria-label="닫기"><svg viewBox="0 0 24 24"
+                aria-hidden="true">
+                <path d="M6 6 L18 18 M18 6 L6 18" />
+            </svg></button>
+        <figure class="lightbox__figure">
+            <img class="lightbox__img" src="" alt="">
+            <figcaption class="lightbox__caption"></figcaption>
+        </figure>
     </dialog>
 
     <footer class="site-footer">
@@ -441,7 +456,7 @@
 
     <button class="to-top" type="button" aria-label="맨 위로 이동" data-to-top>TOP</button>
 
-    <script src="main.js?v=1115"></script>
+    <script src="main.js?v=1116"></script>
 </body>
 
 </html>
