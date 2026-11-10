@@ -30,6 +30,7 @@ const CLASSES = [
 
 const KINDS = { gift: '답례품', goods: '굿즈', piece: '작품' };
 const CTA_LABELS = { gift: '이렇게 주문하고 싶어요', goods: '나만의 굿즈 문의하기', piece: '이런 걸 만들고 싶어요' };
+const ASK_MESSAGES = { gift: '이렇게 주문하고 싶어요!', goods: '이런 굿즈를 만들고 싶어요!', piece: '이런 걸 만들고 싶어요!' };
 
 const WORKS = [
   { id: 'bear-gift', kind: 'gift', title: '엄마곰 아기곰 답례품', desc: '투명 상자에 리본을 묶어 하나하나 포장한 곰돌이 석고 답례품이에요.', photos: ['gift.jpg'] },
@@ -142,10 +143,53 @@ const renderCase = (id) => {
       <a class="back" href="#works/${w.kind}">${KINDS[w.kind]}</a>
       <h2 class="detail__title">${escapeHtml(w.title)}</h2>
       <p class="detail__desc">${escapeHtml(w.desc || '')}</p>
-      <a class="cta" href="${KAKAO}" target="_blank" rel="noopener">${CTA_LABELS[w.kind] || '이런 걸 만들고 싶어요'}</a>
+      <a class="cta" href="${KAKAO}" target="_blank" rel="noopener" data-ask="${w.id}">${CTA_LABELS[w.kind] || '이런 걸 만들고 싶어요'}</a>
+      <p class="detail__note">누르면 이 작업 링크가 복사돼요. 카톡 창에 붙여넣어 보내주세요.</p>
     </div>`;
   return true;
 };
+
+const toast = document.createElement('p');
+toast.className = 'toast';
+toast.setAttribute('role', 'status');
+document.body.appendChild(toast);
+let toastTimer;
+const showToast = (text) => {
+  toast.textContent = text;
+  toast.classList.add('is-on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('is-on'), 3200);
+};
+
+const copyText = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (error) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    const ok = document.execCommand('copy');
+    area.remove();
+    return ok;
+  }
+};
+
+document.addEventListener('click', (event) => {
+  const ask = event.target.closest('[data-ask]');
+  if (!ask) return;
+  const w = allWorks.find((item) => item.id === ask.dataset.ask);
+  if (!w) return;
+  const url = `${location.origin}${location.pathname}#case/${w.id}`;
+  const message = `[${w.title}] ${ASK_MESSAGES[w.kind] || '이런 걸 만들고 싶어요!'}\n${url}`;
+  copyText(message).then((ok) => {
+    if (ok) showToast('링크를 복사했어요. 카톡에 붙여넣어 주세요.');
+  });
+});
 
 const views = document.querySelectorAll('[data-view]');
 const navLinks = document.querySelectorAll('.top__nav a');

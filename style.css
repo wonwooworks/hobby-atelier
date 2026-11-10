@@ -487,6 +487,37 @@ body.is-home .bar {
   margin-top: 0.5rem;
 }
 
+.detail__note {
+  margin-top: -0.4rem;
+  font-size: 0.8125rem;
+  color: var(--c-ink-soft);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  z-index: 80;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 0.7rem 1.1rem;
+  border-radius: 16px;
+  background: var(--c-ink);
+  color: var(--c-white);
+  font-size: 0.875rem;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .visit-grid {
   display: grid;
   gap: 1.5rem;
@@ -887,6 +918,10 @@ body:not(.is-home) {
 
   .bar {
     display: none;
+  }
+
+  .toast {
+    bottom: 32px;
   }
 
   body:not(.is-home) {

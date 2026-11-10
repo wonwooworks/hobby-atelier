@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, query, orderBy, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc, doc, serverTimestamp, runTransaction } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const CONFIG = window.HOBBY_CONFIG;
 const app = initializeApp(CONFIG.firebase);
@@ -27,6 +27,9 @@ const photosEl = $('[data-photos]');
 const fileInput = $('[data-file]');
 const saveBtn = $('[data-save]');
 const deleteBtn = $('[data-delete]');
+const progressEl = $('[data-progress]');
+const progressBar = $('[data-progress-bar]');
+const progressText = $('[data-progress-text]');
 
 const photoUrl = (key) => `${CONFIG.photoBaseUrl.replace(/\/$/, '')}/${key}`;
 
@@ -62,7 +65,10 @@ const renderList = () => {
         <p class="item__title">${escapeHtml(w.title)}</p>
         <p class="item__meta">${KINDS[w.kind] || ''} · 사진 ${w.photos.length}장</p>
       </div>
-      <button class="btn item__edit" type="button" data-edit="${w.id}">수정</button>
+      <div class="item__actions">
+        <button class="btn item__btn" type="button" data-edit="${w.id}">수정</button>
+        <button class="btn btn--danger item__btn" type="button" data-remove-work="${w.id}">삭제</button>
+      </div>
     </li>`).join('');
 };
 
@@ -96,6 +102,7 @@ const openEditor = (work) => {
 };
 
 const closeEditor = () => {
+  if (editorForm.classList.contains('is-busy')) return;
   photos.forEach((p) => { if (p.preview) URL.revokeObjectURL(p.preview); });
   editor.close();
 };
@@ -124,15 +131,40 @@ const callWorker = async (path, options) => {
   return res.json();
 };
 
-const upload = async (blob, base) => {
+const upload = async (blob, base, onProgress) => {
   const isWebp = blob.type === 'image/webp';
   const key = `${base}.${isWebp ? 'webp' : 'jpg'}`;
-  await callWorker(`/upload?key=${encodeURIComponent(key)}`, {
-    method: 'POST',
-    headers: { 'Content-Type': isWebp ? 'image/webp' : 'image/jpeg' },
-    body: blob
+  const token = await auth.currentUser.getIdToken();
+  await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${CONFIG.workerUrl.replace(/\/$/, '')}/upload?key=${encodeURIComponent(key)}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.setRequestHeader('Content-Type', isWebp ? 'image/webp' : 'image/jpeg');
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable && onProgress) onProgress(event.loaded);
+    });
+    xhr.addEventListener('load', () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`worker ${xhr.status}`))));
+    xhr.addEventListener('error', () => reject(new Error('network')));
+    xhr.send(blob);
   });
+  if (onProgress) onProgress(blob.size);
   return key;
+};
+
+const deleteWork = async (work) => {
+  await deleteDoc(doc(db, 'works', work.id));
+  await removeFromBucket(work.photos.flatMap((p) => [p.full, p.thumb]));
+};
+
+const setProgress = (percent, text) => {
+  progressEl.hidden = false;
+  progressBar.style.width = `${percent}%`;
+  progressText.textContent = `${text} ${Math.round(percent)}%`;
+};
+
+const hideProgress = () => {
+  progressEl.hidden = true;
+  progressBar.style.width = '0%';
 };
 
 const removeFromBucket = async (keys) => {
@@ -182,10 +214,26 @@ loginForm.addEventListener('submit', async (event) => {
 $('[data-logout]').addEventListener('click', () => signOut(auth));
 $('[data-new]').addEventListener('click', () => openEditor());
 $('[data-editor-close]').addEventListener('click', closeEditor);
+editor.addEventListener('cancel', (event) => {
+  if (editorForm.classList.contains('is-busy')) event.preventDefault();
+});
 
-list.addEventListener('click', (event) => {
-  const btn = event.target.closest('[data-edit]');
-  if (btn) openEditor(works.find((w) => w.id === btn.dataset.edit));
+list.addEventListener('click', async (event) => {
+  const edit = event.target.closest('[data-edit]');
+  const remove = event.target.closest('[data-remove-work]');
+  if (edit) openEditor(works.find((w) => w.id === edit.dataset.edit));
+  if (remove) {
+    const work = works.find((w) => w.id === remove.dataset.removeWork);
+    if (!work || !window.confirm(`'${work.title}' 작업을 삭제할까요? 사진도 함께 지워져요.`)) return;
+    remove.disabled = true;
+    try {
+      await deleteWork(work);
+      await loadWorks();
+    } catch (error) {
+      remove.disabled = false;
+      setMessage(listMessage, '삭제하지 못했어요. 다시 시도해 주세요.', true);
+    }
+  }
 });
 
 photosEl.addEventListener('click', (event) => {
@@ -219,23 +267,34 @@ editorForm.addEventListener('submit', async (event) => {
     return;
   }
   saveBtn.disabled = true;
-  const pending = photos.filter((p) => p.file);
+  saveBtn.classList.add('is-loading');
+  editorForm.classList.add('is-busy');
+  setMessage(editorMessage, '');
   try {
-    let done = 0;
+    const pending = photos.filter((p) => p.file);
+    if (pending.length) setProgress(0, '사진 준비 중');
+    let prepared = 0;
+    for (const p of pending) {
+      [p.fullBlob, p.thumbBlob] = await Promise.all([resize(p.file, FULL_SIZE), resize(p.file, THUMB_SIZE)]);
+      prepared += 1;
+      setProgress((prepared / pending.length) * 100, '사진 준비 중');
+    }
+    const total = pending.reduce((sum, p) => sum + p.fullBlob.size + p.thumbBlob.size, 0);
+    let sent = 0;
+    const track = (loaded) => setProgress(Math.min(99, ((sent + loaded) / total) * 100), '사진 올리는 중');
     const saved = [];
     for (const p of photos) {
       if (p.file) {
-        setMessage(editorMessage, `사진 올리는 중이에요 (${done + 1}/${pending.length})`);
-        const [full, thumb] = await Promise.all([resize(p.file, FULL_SIZE), resize(p.file, THUMB_SIZE)]);
-        const fullKey = await upload(full, newKey('full'));
-        const thumbKey = await upload(thumb, newKey('thumb'));
+        const fullKey = await upload(p.fullBlob, newKey('full'), track);
+        sent += p.fullBlob.size;
+        const thumbKey = await upload(p.thumbBlob, newKey('thumb'), track);
+        sent += p.thumbBlob.size;
         saved.push({ full: fullKey, thumb: thumbKey });
-        done += 1;
       } else {
         saved.push({ full: p.full, thumb: p.thumb });
       }
     }
-    setMessage(editorMessage, '저장하는 중이에요.');
+    setProgress(100, '저장하는 중');
     const data = {
       kind: editorForm.kind.value,
       title: editorForm.title.value.trim(),
@@ -245,15 +304,28 @@ editorForm.addEventListener('submit', async (event) => {
     if (editing) {
       await updateDoc(doc(db, 'works', editing.id), { ...data, updatedAt: serverTimestamp() });
     } else {
-      await addDoc(worksRef, { ...data, createdAt: serverTimestamp() });
+      const counterRef = doc(db, 'meta', 'counter');
+      const no = await runTransaction(db, async (tx) => {
+        const snap = await tx.get(counterRef);
+        const next = (snap.exists() ? snap.data().works || 0 : 0) + 1;
+        tx.set(counterRef, { works: next }, { merge: true });
+        return next;
+      });
+      await setDoc(doc(db, 'works', String(no)), { ...data, no, createdAt: serverTimestamp() });
     }
     await removeFromBucket(removedKeys);
+    editorForm.classList.remove('is-busy');
+    hideProgress();
     closeEditor();
     await loadWorks();
   } catch (error) {
+    console.error(error);
     setMessage(editorMessage, '저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.', true);
   } finally {
+    hideProgress();
     saveBtn.disabled = false;
+    saveBtn.classList.remove('is-loading');
+    editorForm.classList.remove('is-busy');
   }
 });
 
@@ -261,8 +333,7 @@ deleteBtn.addEventListener('click', async () => {
   if (!editing || !window.confirm('이 작업을 삭제할까요? 사진도 함께 지워져요.')) return;
   deleteBtn.disabled = true;
   try {
-    await deleteDoc(doc(db, 'works', editing.id));
-    await removeFromBucket(editing.photos.flatMap((p) => [p.full, p.thumb]));
+    await deleteWork(editing);
     closeEditor();
     await loadWorks();
   } catch (error) {
