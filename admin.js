@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc, doc, serverTimestamp, runTransaction } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const CONFIG = window.HOBBY_CONFIG;
@@ -222,6 +222,22 @@ loginForm.addEventListener('submit', async (event) => {
 });
 
 $('[data-logout]').addEventListener('click', () => signOut(auth));
+
+$('[data-reset]').addEventListener('click', async () => {
+  const email = loginForm.email.value.trim();
+  if (!email) {
+    setMessage(loginMessage, '이메일을 먼저 입력해 주세요.', true);
+    loginForm.email.focus();
+    return;
+  }
+  try {
+    auth.languageCode = 'ko';
+    await sendPasswordResetEmail(auth, email);
+  } catch (error) {
+    console.error(error);
+  }
+  setMessage(loginMessage, '등록된 이메일이라면 비밀번호 설정 메일을 보냈어요. 메일함을 확인해 주세요.');
+});
 $('[data-new]').addEventListener('click', () => openEditor());
 $('[data-editor-close]').addEventListener('click', closeEditor);
 editor.addEventListener('cancel', (event) => {

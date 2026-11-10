@@ -212,6 +212,19 @@ img {
   background: var(--c-white);
 }
 
+.login__reset {
+  justify-self: center;
+  padding: 0.2rem;
+  border: 0;
+  background: none;
+  color: var(--c-ink-soft);
+  font: inherit;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
 .login__title {
   font-size: 1.375rem;
   font-weight: 800;
