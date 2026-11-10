@@ -236,17 +236,3 @@ if (home && paintLayer && canPaint) {
     paintLayer.appendChild(dab);
   });
 }
-
-if (localStorage.getItem('hobbyAdmin') === '1') {
-  const side = document.querySelector('.top__side');
-  const inHeader = document.createElement('a');
-  inHeader.className = 'admin-return';
-  inHeader.href = 'admin.html';
-  inHeader.textContent = '관리자';
-  if (side) side.prepend(inHeader);
-  const onHome = document.createElement('a');
-  onHome.className = 'admin-return admin-return--home';
-  onHome.href = 'admin.html';
-  onHome.textContent = '관리자';
-  document.querySelector('.view--home').appendChild(onHome);
-}

@@ -273,8 +273,7 @@ deleteBtn.addEventListener('click', async () => {
 });
 
 onAuthStateChanged(auth, (user) => {
-  if (user) localStorage.setItem('hobbyAdmin', '1');
-  else localStorage.removeItem('hobbyAdmin');
+  localStorage.removeItem('hobbyAdmin');
   loginView.hidden = Boolean(user);
   appView.hidden = !user;
   if (user) loadWorks();

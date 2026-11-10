@@ -479,7 +479,7 @@ body.is-home .bar {
 }
 
 .detail__points li::before {
-  content: "— ";
+  content: "· ";
 }
 
 .detail__text .cta {
@@ -615,20 +615,6 @@ body.is-home .bar {
 
 body:not(.is-home) {
   padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-}
-
-.admin-return {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.admin-return--home {
-  position: fixed;
-  top: calc(14px + env(safe-area-inset-top, 0px));
-  right: 14px;
-  z-index: 70;
 }
 
 .more-link {
