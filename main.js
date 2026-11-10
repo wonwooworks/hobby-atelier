@@ -29,6 +29,7 @@ const CLASSES = [
 ];
 
 const KINDS = { gift: '답례품', goods: '굿즈', piece: '작품' };
+const CTA_LABELS = { gift: '이렇게 주문하고 싶어요', goods: '나만의 굿즈 문의하기', piece: '이런 걸 만들고 싶어요' };
 
 const WORKS = [
   { id: 'bear-gift', kind: 'gift', title: '엄마곰 아기곰 답례품', desc: '투명 상자에 리본을 묶어 하나하나 포장한 곰돌이 석고 답례품이에요.', photos: ['gift.jpg'] },
@@ -37,10 +38,67 @@ const WORKS = [
   { id: 'dressed-bears', kind: 'goods', title: '옷 입은 곰돌이', desc: '멜빵바지와 잠옷을 입은 곰돌이 석고예요.', photos: ['made3.jpg'] },
   { id: 'summer-puppies', kind: 'piece', title: '여름 강아지들', desc: '튜브와 선글라스로 여름을 꾸민 강아지 석고방향제예요.', photos: ['hero.jpg'] },
   { id: 'flower-candle', kind: 'piece', title: '플라워 캔들', desc: '알록달록한 꽃 장식을 올린 유리 용기 캔들이에요.', photos: ['made2.jpg'] },
-  { id: 'character-plaster', kind: 'piece', title: '캐릭터 석고방향제', desc: '원데이클래스에서 만나는 다양한 동물 캐릭터 석고예요.', photos: ['plaster.jpg'] }
+  { id: 'character-plaster', kind: 'piece', title: '캐릭터 석고방향제', desc: '원데이클래스에서 만나는 다양한 동물 캐릭터 석고예요.', photos: ['plaster.jpg'] },
+  { id: 'cold-bears', kind: 'goods', title: '앗추워 곰돌이', desc: '쌀쌀해진 날씨에 따뜻한 패딩을 꺼내 입은 꼬마 곰돌이들이에요.', photos: ['cold-bear.jpg'] },
+  { id: 'baby-1st', kind: 'gift', title: '첫돌 기념 답례품', desc: '소중한 아가의 첫 생일을 축하하고 기념하기 위한 답례품이에요.', photos: ['baby-1st1.jpg', 'baby-1st2.jpg'] }
 ];
 
-const img = (file, alt, cls = '') => `<img${cls ? ` class="${cls}"` : ''} src="images/${file}" alt="${alt}" loading="lazy">`;
+const CONFIG = window.HOBBY_CONFIG || {};
+const photoBase = (CONFIG.photoBaseUrl || '').replace(/\/$/, '');
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pic = (src, alt, cls = '') => `<img${cls ? ` class="${cls}"` : ''} src="${src}" alt="${escapeHtml(alt)}" loading="lazy">`;
+const img = (file, alt, cls = '') => pic(`images/${file}`, alt, cls);
+
+const localWorks = WORKS.map((w) => ({ ...w, photos: w.photos.map((f) => ({ full: `images/${f}`, thumb: `images/${f}` })) }));
+let allWorks = localWorks;
+
+const readField = (field) => {
+  if (!field) return '';
+  if ('stringValue' in field) return field.stringValue;
+  if ('timestampValue' in field) return field.timestampValue;
+  if ('arrayValue' in field) return (field.arrayValue.values || []).map(readField);
+  if ('mapValue' in field) {
+    return Object.fromEntries(Object.entries(field.mapValue.fields || {}).map(([k, v]) => [k, readField(v)]));
+  }
+  return '';
+};
+
+const loadRemoteWorks = async () => {
+  const { projectId, apiKey } = CONFIG.firebase || {};
+  if (!window.HOBBY_CONFIG) {
+    console.warn('[취미공작소] config.js를 불러오지 못했어요. index.html에 config.js가 연결되어 있는지 확인해 주세요.');
+    return;
+  }
+  if (!projectId || !photoBase) {
+    console.warn('[취미공작소] config.js의 projectId 또는 photoBaseUrl이 비어 있어요.');
+    return;
+  }
+  try {
+    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/works?pageSize=300${apiKey ? `&key=${apiKey}` : ''}`);
+    if (!res.ok) {
+      console.warn(`[취미공작소] 작업물을 불러오지 못했어요 (${res.status}). Firestore 보안 규칙의 읽기 권한을 확인해 주세요.`);
+      return;
+    }
+    const data = await res.json();
+    const remote = (data.documents || []).map((d) => {
+      const f = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, readField(v)]));
+      return {
+        id: d.name.split('/').pop(),
+        kind: f.kind,
+        title: f.title,
+        desc: f.desc,
+        createdAt: f.createdAt || '',
+        photos: (f.photos || []).map((p) => ({ full: `${photoBase}/${p.full}`, thumb: `${photoBase}/${p.thumb}` }))
+      };
+    }).filter((w) => w.photos.length && KINDS[w.kind]);
+    remote.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+    allWorks = [...remote, ...localWorks];
+    const section = location.hash.replace(/^#/, '').split('/')[0];
+    if (section === 'works' || section === 'case') route();
+  } catch (error) {
+    console.warn(error);
+  }
+};
 
 const classList = document.querySelector('[data-class-list]');
 if (classList) {
@@ -50,9 +108,9 @@ if (classList) {
 
 const worksList = document.querySelector('[data-works-list]');
 const renderWorks = (filter) => {
-  const list = filter && filter !== 'all' ? WORKS.filter((w) => w.kind === filter) : WORKS;
+  const list = filter && filter !== 'all' ? allWorks.filter((w) => w.kind === filter) : allWorks;
   worksList.innerHTML = list.map((w) => `
-    <li><a class="tile" href="#case/${w.id}">${img(w.photos[0], w.title, 'tile__img')}<span class="tile__name">${w.title}</span><span class="tile__meta">${KINDS[w.kind]}</span></a></li>`).join('');
+    <li><a class="tile" href="#case/${w.id}">${pic(w.photos[0].thumb, w.title, 'tile__img')}<span class="tile__name">${escapeHtml(w.title)}</span><span class="tile__meta">${KINDS[w.kind]}</span></a></li>`).join('');
   document.querySelectorAll('[data-filter]').forEach((el) => {
     el.classList.toggle('is-on', el.dataset.filter === (filter || 'all'));
   });
@@ -76,15 +134,15 @@ const renderClass = (id) => {
 
 const caseDetail = document.querySelector('[data-case-detail]');
 const renderCase = (id) => {
-  const w = WORKS.find((item) => item.id === id);
+  const w = allWorks.find((item) => item.id === id);
   if (!w) return false;
   caseDetail.innerHTML = `
-    <div class="detail__photos">${w.photos.map((p) => img(p, w.title)).join('')}</div>
+    <div class="detail__photos">${w.photos.map((p) => pic(p.full, w.title)).join('')}</div>
     <div class="detail__text">
       <a class="back" href="#works/${w.kind}">${KINDS[w.kind]}</a>
-      <h2 class="detail__title">${w.title}</h2>
-      <p class="detail__desc">${w.desc}</p>
-      <a class="cta" href="${KAKAO}" target="_blank" rel="noopener">비슷하게 만들고 싶어요</a>
+      <h2 class="detail__title">${escapeHtml(w.title)}</h2>
+      <p class="detail__desc">${escapeHtml(w.desc || '')}</p>
+      <a class="cta" href="${KAKAO}" target="_blank" rel="noopener">${CTA_LABELS[w.kind] || '이런 걸 만들고 싶어요'}</a>
     </div>`;
   return true;
 };
@@ -109,10 +167,11 @@ const route = () => {
   } else if (section === 'works') {
     renderWorks(sub);
     show('works');
-    active = sub === 'gift' || sub === 'goods' ? `works/${sub}` : 'works';
+    active = KINDS[sub] ? `works/${sub}` : '';
   } else if (section === 'case' && sub && renderCase(sub)) {
     show('case');
-    active = 'works';
+    const work = allWorks.find((item) => item.id === sub);
+    active = work ? `works/${work.kind}` : '';
   } else if (section === 'visit') {
     show('visit');
     active = 'visit';
@@ -125,6 +184,7 @@ const route = () => {
 
 window.addEventListener('hashchange', route);
 route();
+loadRemoteWorks();
 
 const lightbox = document.querySelector('.lightbox');
 if (lightbox) {
@@ -175,4 +235,12 @@ if (home && paintLayer && canPaint) {
     dab.addEventListener('animationend', () => dab.remove());
     paintLayer.appendChild(dab);
   });
+}
+
+if (localStorage.getItem('hobbyAdmin') === '1') {
+  const back = document.createElement('a');
+  back.className = 'admin-return';
+  back.href = 'admin.html';
+  back.textContent = '관리자 화면';
+  document.body.appendChild(back);
 }

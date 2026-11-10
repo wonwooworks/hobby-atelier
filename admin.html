@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>취미공작소 관리자</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="admin.css?v=2">
+</head>
+
+<body>
+
+  <section class="login" data-login hidden>
+    <form class="login__box" data-login-form>
+      <h1 class="login__title">취미공작소 관리자</h1>
+      <label class="field">
+        <span class="field__label">이메일</span>
+        <input class="field__input" type="email" name="email" autocomplete="username" required>
+      </label>
+      <label class="field">
+        <span class="field__label">비밀번호</span>
+        <input class="field__input" type="password" name="password" autocomplete="current-password" required>
+      </label>
+      <p class="message" data-login-message role="alert"></p>
+      <button class="btn btn--primary btn--block" type="submit">로그인</button>
+    </form>
+  </section>
+
+  <div class="app" data-app hidden>
+    <header class="bar">
+      <strong class="bar__title">작업물 관리</strong>
+      <div class="bar__side">
+        <a class="bar__link" href="index.html#works">사이트 보기</a>
+        <button class="bar__link" type="button" data-logout>로그아웃</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <button class="btn btn--primary" type="button" data-new>새 작업 올리기</button>
+      <p class="message" data-list-message></p>
+      <ul class="list" data-list></ul>
+    </main>
+  </div>
+
+  <dialog class="editor" data-editor aria-labelledby="editor-title">
+    <form class="editor__box" data-editor-form>
+      <div class="editor__head">
+        <h2 class="editor__title" id="editor-title" data-editor-title>새 작업 올리기</h2>
+        <button class="editor__close" type="button" data-editor-close aria-label="닫기">닫기</button>
+      </div>
+
+      <label class="field">
+        <span class="field__label">분류</span>
+        <select class="field__input" name="kind" required>
+          <option value="gift">답례품</option>
+          <option value="goods">굿즈</option>
+          <option value="piece">작품</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field__label">제목</span>
+        <input class="field__input" type="text" name="title" maxlength="60" required>
+      </label>
+      <label class="field">
+        <span class="field__label">설명</span>
+        <textarea class="field__input field__input--area" name="desc" maxlength="600" rows="4"></textarea>
+      </label>
+
+      <div class="field">
+        <span class="field__label">사진 <small>첫 번째 사진이 목록에 보여요</small></span>
+        <ul class="photos" data-photos></ul>
+        <label class="photo-add">
+          <input type="file" accept="image/*" multiple data-file>
+          <span>사진 추가</span>
+        </label>
+      </div>
+
+      <p class="message" data-editor-message role="status"></p>
+      <div class="editor__actions">
+        <button class="btn btn--danger" type="button" data-delete hidden>이 작업 삭제</button>
+        <button class="btn btn--primary" type="submit" data-save>저장</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="config.js?v=2"></script>
+  <script type="module" src="admin.js?v=4"></script>
+</body>
+
+</html>

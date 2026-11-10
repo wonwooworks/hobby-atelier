@@ -449,7 +449,7 @@ body.is-home .bar {
 }
 
 .detail__points li::before {
-  content: "— ";
+  content: "· ";
 }
 
 .detail__text .cta {
@@ -529,7 +529,6 @@ body.is-home .bar {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem 1.4rem;
-  justify-content: center;
 }
 
 .line-link {
@@ -586,6 +585,25 @@ body.is-home .bar {
 
 body:not(.is-home) {
   padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+.admin-return {
+  position: fixed;
+  right: 12px;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  z-index: 70;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  background: var(--c-ink);
+  color: var(--c-white);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(38, 30, 66, 0.25);
+}
+
+body.is-home .admin-return {
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
 }
 
 .lightbox {
@@ -845,6 +863,10 @@ body:not(.is-home) {
 
   .bar {
     display: none;
+  }
+
+  .admin-return {
+    bottom: 16px;
   }
 
   body:not(.is-home) {
