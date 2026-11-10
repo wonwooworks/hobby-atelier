@@ -144,7 +144,7 @@ const renderCase = (id) => {
       <h2 class="detail__title">${escapeHtml(w.title)}</h2>
       <p class="detail__desc">${escapeHtml(w.desc || '')}</p>
       <a class="cta" href="${KAKAO}" target="_blank" rel="noopener" data-ask="${w.id}">${CTA_LABELS[w.kind] || '이런 걸 만들고 싶어요'}</a>
-      <p class="detail__note">누르면 이 작업 링크가 복사돼요. 카톡 창에 붙여넣어 보내주세요.</p>
+      <p class="detail__note">누르면 이 작업물 링크가 복사돼요. 카톡 창에 붙여넣어 보내주세요.</p>
     </div>`;
   return true;
 };
