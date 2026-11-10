@@ -238,9 +238,15 @@ if (home && paintLayer && canPaint) {
 }
 
 if (localStorage.getItem('hobbyAdmin') === '1') {
-  const back = document.createElement('a');
-  back.className = 'admin-return';
-  back.href = 'admin.html';
-  back.textContent = '관리자 화면';
-  document.body.appendChild(back);
+  const side = document.querySelector('.top__side');
+  const inHeader = document.createElement('a');
+  inHeader.className = 'admin-return';
+  inHeader.href = 'admin.html';
+  inHeader.textContent = '관리자';
+  if (side) side.prepend(inHeader);
+  const onHome = document.createElement('a');
+  onHome.className = 'admin-return admin-return--home';
+  onHome.href = 'admin.html';
+  onHome.textContent = '관리자';
+  document.querySelector('.view--home').appendChild(onHome);
 }
