@@ -151,6 +151,16 @@ const upload = async (blob, base, onProgress) => {
   return key;
 };
 
+const explainError = (error) => {
+  const code = error.code || error.message || '';
+  if (code === 'network') return `사진 업로드가 막혔어요. Worker의 ALLOWED_ORIGIN에 지금 주소(${location.origin})가 있는지 확인해 주세요. (network)`;
+  if (code === 'worker 401') return '업로드 로그인 확인에 실패했어요. Worker의 FIREBASE_PROJECT_ID를 확인해 주세요. (worker 401)';
+  if (code === 'worker 403') return '이 계정은 업로드 권한이 없어요. Worker의 ADMIN_EMAILS를 확인해 주세요. (worker 403)';
+  if (code.startsWith('worker')) return `사진을 올리지 못했어요. (${code})`;
+  if (code === 'permission-denied') return '저장 권한이 없어요. Firestore 규칙에 관리자 이메일이 맞게 들어갔는지, 새 규칙을 게시했는지 확인해 주세요. (permission-denied)';
+  return `저장하지 못했어요. 다시 시도해 주세요. (${code})`;
+};
+
 const deleteWork = async (work) => {
   await deleteDoc(doc(db, 'works', work.id));
   await removeFromBucket(work.photos.flatMap((p) => [p.full, p.thumb]));
@@ -320,7 +330,7 @@ editorForm.addEventListener('submit', async (event) => {
     await loadWorks();
   } catch (error) {
     console.error(error);
-    setMessage(editorMessage, '저장하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.', true);
+    setMessage(editorMessage, explainError(error), true);
   } finally {
     hideProgress();
     saveBtn.disabled = false;
