@@ -374,3 +374,27 @@ window.addEventListener('hashchange', () => showPage(location.hash, true));
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 showPage(location.hash, false);
 loadRemoteWorks();
+const desk = window.matchMedia('(min-width: 768px)');
+function fitHeroes() {
+  const heroes = [...document.querySelectorAll('.hero--fit, .hero--gallery')];
+  if (!desk.matches) { heroes.forEach((hero) => { hero.style.removeProperty('--vl'); hero.style.removeProperty('--vr'); }); return; }
+  const edges = heroes.map((hero) => {
+    const kids = [...hero.querySelectorAll('.hero__text > *:not(.buddy)')].map((k) => k.getBoundingClientRect()).filter((r) => r.width);
+    if (!kids.length) return null;
+    const box = hero.getBoundingClientRect();
+    return [Math.min(...kids.map((r) => r.left)) - box.left, Math.max(...kids.map((r) => r.right)) - box.left];
+  });
+  const found = edges.filter(Boolean);
+  if (!found.length) return;
+  const l = Math.min(...found.map((e) => e[0]));
+  heroes.forEach((hero, i) => {
+    if (!edges[i]) return;
+    hero.style.setProperty('--vl', l.toFixed(1) + 'px');
+    hero.style.setProperty('--vr', edges[i][1].toFixed(1) + 'px');
+  });
+}
+const heroRO = new ResizeObserver(fitHeroes);
+document.querySelectorAll('.hero--fit .hero__text, .hero--gallery .hero__text').forEach((t) => heroRO.observe(t));
+window.addEventListener('resize', fitHeroes);
+if (document.fonts) document.fonts.ready.then(fitHeroes);
+fitHeroes();

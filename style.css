@@ -534,7 +534,7 @@ ul {
   align-content: start;
   justify-items: center;
   gap: 1.1rem;
-  width: min(30rem, 32vw);
+  width: var(--tw, min(30rem, 32vw));
   height: min(34rem, calc(100dvh - var(--top-h) - var(--bottom-h) - 4rem));
   text-align: center;
 }
@@ -607,10 +607,24 @@ ul {
 }
 
 @media (min-width: 768px) {
+  .hero {
+    --tw: clamp(21rem, 24vw, 26rem);
+    --gap: clamp(3rem, 5vw, 6.5rem);
+    --ph: calc(100dvh - var(--top-h) - var(--bottom-h) - 6rem);
+    --pref: min(52vw, calc(var(--ph) * 1.25), 60rem);
+    --lx: max(1.5rem, calc((100vw - var(--tw) - var(--gap) - var(--pref)) / 2));
+    --plx: calc(var(--lx) + var(--tw) + var(--gap));
+    --bw: min(calc(100vw - var(--plx) - 3.5rem), var(--pref));
+    --vl: calc(var(--lx) + 2rem);
+    --vr: calc(var(--lx) + var(--tw) - 2rem);
+    --av: min(var(--pref), calc(100vw - var(--vl) - var(--vr) - 3rem));
+    padding-left: var(--lx);
+  }
+
   .hero--fit {
-    --pw: min(56vw, calc((100dvh - var(--top-h) - var(--bottom-h) - 6rem) * var(--ar)), var(--maxw, 1400px));
+    --pw: min(var(--av), calc(var(--ph) * var(--ar)), var(--maxw, 1400px));
+    --pl: calc(100vw - var(--vl) - var(--pw));
     --cy: calc(var(--top-h) + (100% - var(--top-h) - var(--bottom-h)) / 2);
-    --px: max(5vw, calc((100vw - clamp(1.5rem, 7vw, 7.5rem) - min(30rem, 32vw) - var(--pw)) / 2));
   }
 
   .hero--fit::before {
@@ -619,7 +633,8 @@ ul {
 
   .hero--fit .hero__photo {
     top: var(--cy);
-    right: var(--px);
+    left: var(--pl);
+    right: auto;
     bottom: auto;
     width: var(--pw);
     height: auto;
@@ -635,9 +650,10 @@ ul {
 
   .hero--fit .hero__dots {
     top: calc(var(--cy) + var(--pw) / var(--ar) / 2 + 0.3rem);
-    right: calc(var(--px) + var(--pw) / 2);
+    left: calc(var(--pl) + var(--pw) / 2);
+    right: auto;
     bottom: auto;
-    translate: 50% 0;
+    translate: -50% 0;
   }
 }
 
@@ -687,15 +703,11 @@ ul {
   scale: 1.15;
 }
 
-.buddy__img {
-  mix-blend-mode: multiply;
-}
-
 .buddy {
   position: absolute;
-  left: -3rem;
-  bottom: -2.2rem;
-  width: 160px;
+  right: -4.2rem;
+  bottom: -1.8rem;
+  width: 150px;
   pointer-events: none;
 }
 
@@ -707,8 +719,8 @@ ul {
 
 .buddy__bubble {
   position: absolute;
-  left: 0;
-  top: -1.8rem;
+  left: 48%;
+  top: -1.6rem;
   padding: 0.25rem 0.9rem;
   border: 2px solid var(--ink);
   border-radius: var(--hand-r2);
@@ -722,7 +734,7 @@ ul {
 .buddy__bubble::after {
   content: "";
   position: absolute;
-  left: 62%;
+  left: 18%;
   bottom: -8px;
   width: 12px;
   height: 12px;
@@ -1082,7 +1094,6 @@ ul {
 }
 
 .hero--gallery {
-  --tw: min(30rem, 32vw);
   --gw: min(25rem, 26vw);
 }
 
@@ -1096,8 +1107,8 @@ ul {
   position: absolute;
   z-index: 2;
   top: calc(var(--top-h) + (100% - var(--top-h) - var(--bottom-h)) / 2);
-  right: max(5vw, calc((100vw - clamp(1.5rem, 7vw, 7.5rem) - var(--tw) - min(52vw, var(--wh) * 1.32)) / 2));
-  width: min(52vw, calc(var(--wh) * 1.32));
+  left: calc(100vw - var(--vl) - var(--av, var(--bw)));
+  width: var(--av, var(--bw));
   height: var(--wh);
   translate: 0 -50%;
   display: flex;
@@ -1969,10 +1980,10 @@ svg .ln--white {
 
   .buddy {
     left: auto;
-    right: 0.2rem;
-    top: 1.2rem;
-    bottom: auto;
-    width: 84px;
+    right: 0.3rem;
+    top: auto;
+    bottom: -1.6rem;
+    width: 72px;
   }
 
   .buddy__bubble {
