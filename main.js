@@ -307,14 +307,16 @@ document.addEventListener('click', async (event) => {
 });
 
 const workDots = document.querySelector('[data-work-dots]');
+const phone = window.matchMedia('(max-width: 767px)');
 let workPageIndex = 0;
 const showWorkPage = (index, animate) => {
   if (!worksList) return;
   const cards = [...worksList.children];
-  const count = Math.max(1, Math.ceil(cards.length / 8));
+  const per = phone.matches ? 4 : 8;
+  const count = Math.max(1, Math.ceil(cards.length / per));
   workPageIndex = Math.min(Math.max(index, 0), count - 1);
   cards.forEach((li, i) => {
-    const on = Math.floor(i / 8) === workPageIndex;
+    const on = Math.floor(i / per) === workPageIndex;
     li.classList.toggle('is-off', !on);
     li.classList.toggle('is-in', on && animate && !reduceMotion.matches);
   });
@@ -334,6 +336,26 @@ if (workDots) workDots.addEventListener('click', (event) => {
   if (dot) showWorkPage(Number(dot.dataset.workPage), true);
 });
 updateSlide();
+phone.addEventListener('change', () => showWorkPage(0, false));
+
+function onSwipe(el, go) {
+  let x0 = null;
+  let y0 = 0;
+  el.addEventListener('touchstart', (event) => { x0 = event.touches[0].clientX; y0 = event.touches[0].clientY; }, { passive: true });
+  el.addEventListener('touchend', (event) => {
+    if (x0 === null) return;
+    const dx = event.changedTouches[0].clientX - x0;
+    const dy = event.changedTouches[0].clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) go(dx < 0 ? 1 : -1);
+  }, { passive: true });
+}
+const worksBox = document.querySelector('.hero__works');
+if (worksBox) onSwipe(worksBox, (dir) => {
+  const total = workDots ? workDots.children.length : 1;
+  if (total < 2) return;
+  showWorkPage((workPageIndex + dir + total) % total, true);
+});
 
 const sliders = [...document.querySelectorAll('.page--hero')].map((page) => {
   const slides = [...page.querySelectorAll('.hero__slide')];
@@ -352,6 +374,7 @@ const sliders = [...document.querySelectorAll('.page--hero')].map((page) => {
   const photo = page.querySelector('.hero__photo');
   photo.addEventListener('pointerenter', () => { state.hover = true; });
   photo.addEventListener('pointerleave', () => { state.hover = false; });
+  onSwipe(photo, (dir) => { state.go(state.index + dir); restart(state); });
   return state;
 }).filter(Boolean);
 

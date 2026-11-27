@@ -2115,6 +2115,79 @@ svg .ln--white {
   }
 }
 
+@media (max-width: 767px) {
+  .hero {
+    padding-bottom: calc(var(--bottom-h) + 1.4rem);
+  }
+
+  .hero__photo {
+    flex: 1 1 0;
+    height: auto;
+    min-height: calc(20svh + var(--top-h));
+    max-height: calc(min(56svh, 100vw / var(--ar, 1.6) * 1.12) + var(--top-h));
+    touch-action: pan-y;
+  }
+
+  .hero__text {
+    gap: 0.8rem;
+  }
+
+  .hero__text .actions {
+    margin-top: 0.3rem;
+  }
+
+  .hero--gallery {
+    padding-bottom: calc(var(--bottom-h) + 2rem);
+  }
+
+  .hero--center {
+    padding-bottom: calc(var(--bottom-h) + 2.6rem);
+  }
+
+  .hero__dots {
+    gap: 0;
+    padding: 0.1rem 0.35rem;
+    margin: -2rem 0 0.3rem;
+  }
+
+  .hero__dot {
+    width: 20px;
+    height: 20px;
+  }
+
+  .hero__dot::before {
+    width: 7px;
+    height: 7px;
+    border-width: 1.2px;
+  }
+
+  .hero__works {
+    touch-action: pan-y;
+  }
+
+  .hero__works .hero__dots {
+    display: flex;
+    position: relative;
+    top: auto;
+    left: auto;
+    translate: none;
+    align-self: center;
+    margin: 0.4rem 0 0;
+  }
+
+  .hero__works .hero__dots[hidden] {
+    display: none;
+  }
+
+  .works>li.is-off {
+    display: none;
+  }
+
+  .works>li.is-in {
+    animation: stageIn 0.5s var(--ease) both;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .js .hero__text,
