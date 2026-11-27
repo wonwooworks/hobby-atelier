@@ -9,7 +9,7 @@
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-  <link rel="stylesheet" href="admin.css?v=6">
+  <link rel="stylesheet" href="admin.css?v=7">
 </head>
 
 <body>
@@ -42,8 +42,9 @@
 
     <main class="main">
       <button class="btn btn--primary" type="button" data-new>새 작업 올리기</button>
-      <p class="guide">홈페이지 작업물 화면에는 <strong>작품 → 굿즈 → 답례품</strong> 순서로, 같은 분류 안에서는 최근에 올린 것부터 보여요. 한 화면에 8개씩 보이고, 더 많으면
-        아래 점을 눌러 넘겨 볼 수 있어요.<br>여기 목록에 작업이 하나라도 있으면, 홈페이지에는 여기 있는 작업물만 보여요.</p>
+      <p class="guide">홈페이지 작업물 화면에는 <strong>작품 → 굿즈 → 답례품</strong> 순서로, 같은 분류 안에서는 최근에 올린 것부터 보여요. 한 화면에 8개씩(모바일은 4개씩)
+        보이고, 더 많으면 점을 눌러 넘겨 볼 수 있어요.<br>홈페이지에는 <strong>최근에 올린 32개</strong>까지만 보여요. 그보다 오래된 작업은 여기 목록에 흐리게 남아 있고, 지우지 않아도
+        괜찮아요.<br>여기 목록에 작업이 하나라도 있으면, 홈페이지에는 여기 있는 작업물만 보여요.</p>
       <div class="seed" data-seed hidden>
         <p class="seed__text">홈페이지에 기본으로 들어간 작업물 8개가 있어요. 불러오면 여기서 다른 작업물처럼 수정하거나 삭제할 수 있어요.</p>
         <button class="btn btn--primary" type="button" data-seed-btn>기본 작업물 불러오기</button>
@@ -105,7 +106,7 @@
 
   <script src="config.js?v=3"></script>
   <script src="works-default.js?v=1"></script>
-  <script type="module" src="admin.js?v=11"></script>
+  <script type="module" src="admin.js?v=13"></script>
 </body>
 
 </html>

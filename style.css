@@ -2188,6 +2188,16 @@ svg .ln--white {
   }
 }
 
+@media (max-width: 1023px) {
+  .stage {
+    scroll-snap-type: y proximity;
+  }
+
+  #gallery {
+    scroll-snap-align: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .js .hero__text,

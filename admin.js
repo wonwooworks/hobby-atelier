@@ -52,15 +52,18 @@ const setMessage = (el, text, isError = false) => {
 
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+const SHOW_MAX = 32;
 const loadWorks = async () => {
   setMessage(listMessage, '불러오는 중이에요.');
   try {
     const snap = await getDocs(query(worksRef, orderBy('createdAt', 'desc')));
     works = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    works.forEach((w, i) => { w.shown = i < SHOW_MAX; });
     const order = { piece: 0, goods: 1, gift: 2 };
     works.sort((x, y) => (order[x.kind] ?? 9) - (order[y.kind] ?? 9));
     renderList();
-    setMessage(listMessage, works.length ? '' : '아직 올린 작업이 없어요.');
+    const over = works.length - SHOW_MAX;
+    setMessage(listMessage, !works.length ? '아직 올린 작업이 없어요.' : over > 0 ? `작업물이 ${works.length}개예요. 오래된 ${over}개는 홈페이지에 안 보여요. 필요 없는 건 지워 주셔도 돼요.` : `작업물 ${works.length}개 · 홈페이지에는 최근 ${SHOW_MAX}개까지 보여요.`);
     const counter = await getDoc(counterRef);
     seedBox.hidden = Boolean(counter.exists() && counter.data().seeded) || !(window.HOBBY_DEFAULT_WORKS || []).length;
   } catch (error) {
@@ -70,11 +73,11 @@ const loadWorks = async () => {
 
 const renderList = () => {
   list.innerHTML = works.map((w) => `
-    <li class="item">
+    <li class="item${w.shown ? '' : ' is-hidden'}">
       <img class="item__thumb" src="${photoUrl(w.photos[0].thumb)}" alt="">
       <div>
         <p class="item__title">${escapeHtml(w.title)}</p>
-        <p class="item__meta">${KINDS[w.kind] || ''} · 사진 ${w.photos.length}장</p>
+        <p class="item__meta">${KINDS[w.kind] || ''} · 사진 ${w.photos.length}장${w.shown ? '' : ' · <span class="item__off">홈페이지에 안 보여요</span>'}</p>
       </div>
       <div class="item__actions">
         <button class="btn item__btn" type="button" data-edit="${w.id}">수정</button>

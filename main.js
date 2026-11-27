@@ -124,6 +124,7 @@ const readField = (field) => {
   return '';
 };
 
+const SHOW_MAX = 32;
 const loadRemoteWorks = async () => {
   const { projectId, apiKey } = CONFIG.firebase || {};
   if (!projectId || !photoBase) return;
@@ -159,8 +160,10 @@ const loadRemoteWorks = async () => {
       };
     }).filter((w) => w.photo && KINDS[w.kind]);
     if (!remote.length && !seeded) return;
-    remote.sort((a, b) => (KIND_ORDER[a.kind] - KIND_ORDER[b.kind]) || (a.createdAt < b.createdAt ? 1 : -1));
-    allWorks = remote;
+    remote.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+    const shown = remote.slice(0, SHOW_MAX);
+    shown.sort((a, b) => (KIND_ORDER[a.kind] - KIND_ORDER[b.kind]) || (a.createdAt < b.createdAt ? 1 : -1));
+    allWorks = shown;
     renderWorks();
     if (pendingCase && openWork(pendingCase)) pendingCase = '';
   } catch (error) {
