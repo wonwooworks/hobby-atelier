@@ -1,164 +1,49 @@
-const NAVER = 'https://m.booking.naver.com/booking/6/bizes/215117';
+document.documentElement.classList.add('js');
+
 const KAKAO = 'http://pf.kakao.com/_vxehwj/chat';
-
-const CLASSES = [
-  {
-    id: 'plaster',
-    name: '석고방향제',
-    cover: 'plaster.jpg',
-    desc: '캐릭터 모양 석고에 직접 색을 칠하고, 좋아하는 향을 입혀 나만의 방향제를 완성해요.',
-    points: ['수백 가지 몰드 중에서 마음에 드는 모양을 골라요', '물감으로 자유롭게 색을 입혀요', '완성한 방향제는 옷장, 차, 책상 어디에 두어도 좋아요'],
-    photos: ['plaster.jpg', 'hero.jpg', 'made1.jpg']
-  },
-  {
-    id: 'suncatcher',
-    name: '썬캐쳐',
-    cover: 'moru.jpg',
-    desc: '모루로 꽃을 만들고 반짝이는 구슬을 꿰어, 창가에 거는 썬캐쳐를 완성해요.',
-    points: ['알록달록 다양한 색으로 준비되어 있는 모루로 나만의 꽃 모양을 잡아요', '반짝이는 크리스탈로 장식해요', '햇빛을 받으면 방 안에 무지개가 반짝여요'],
-    photos: ['moru-full.jpg', 'sun1.jpg', 'sun2.jpg']
-  },
-  {
-    id: 'beads',
-    name: '비즈 공예',
-    cover: 'beads.jpg',
-    desc: '좋아하는 색의 구슬을 골라, 휴대폰이나 가방에 다는 스트랩을 만들어요.',
-    points: ['원하는 구슬과 꾸밈재료를 골라서 나만의 스트랩을 만들어요', '길이와 배열을 자유롭게 정해요', '폰스트랩이나 키링 등 다양한 쓰임으로 만들어요'],
-    photos: ['beads.jpg', 'beads1.jpg', 'beads2.jpg']
-  }
-];
-
 const KINDS = { gift: '답례품', goods: '굿즈', piece: '작품' };
-const CTA_LABELS = { gift: '이렇게 주문하고 싶어요', goods: '나만의 굿즈 문의하기', piece: '이런 걸 만들고 싶어요' };
+const KIND_ORDER = { piece: 0, goods: 1, gift: 2 };
 const ASK_MESSAGES = { gift: '이렇게 주문하고 싶어요!', goods: '이런 굿즈를 만들고 싶어요!', piece: '이런 걸 만들고 싶어요!' };
+const LEGACY = { visit: 'location', works: 'gallery' };
 
-const WORKS = [
-  { id: 'bear-gift', kind: 'gift', title: '엄마곰 아기곰 답례품', desc: '투명 상자에 리본을 묶어 하나하나 포장한 곰돌이 석고 답례품이에요.', photos: ['gift.jpg'] },
-  { id: 'wedding-birthday', kind: 'gift', title: '웨딩·생일 기념 석고', desc: '두 사람의 모습과 생일 케이크를 석고로 만들어 특별한 날을 기념했어요.', photos: ['made1.jpg'] },
-  { id: 'suwon-goods', kind: 'goods', title: '수원화성 석고 굿즈', desc: '행궁동과 수원화성 풍경을 담아 색칠한 사각 석고 굿즈예요.', photos: ['goods.jpg'] },
-  { id: 'dressed-bears', kind: 'goods', title: '옷 입은 곰돌이', desc: '멜빵바지와 잠옷을 입은 곰돌이 석고예요.', photos: ['made3.jpg'] },
-  { id: 'summer-puppies', kind: 'piece', title: '여름 강아지들', desc: '튜브와 선글라스로 여름을 꾸민 강아지 석고방향제예요.', photos: ['hero.jpg'] },
-  { id: 'flower-candle', kind: 'piece', title: '플라워 캔들', desc: '알록달록한 꽃 장식을 올린 유리 용기 캔들이에요.', photos: ['made2.jpg'] },
-  { id: 'character-plaster', kind: 'piece', title: '캐릭터 석고방향제', desc: '원데이클래스에서 만나는 다양한 동물 캐릭터 석고예요.', photos: ['plaster.jpg'] },
-  { id: 'cold-bears', kind: 'goods', title: '앗추워 곰돌이', desc: '쌀쌀해진 날씨에 따뜻한 패딩을 꺼내 입은 꼬마 곰돌이들이에요.', photos: ['cold-bear.jpg'] },
-  { id: 'baby-1st', kind: 'gift', title: '첫돌 기념 답례품', desc: '소중한 아가의 첫 생일을 축하하고 기념하기 위한 답례품이에요.', photos: ['baby-1st1.jpg', 'baby-1st2.jpg'] }
-];
+const LOCAL_WORKS = window.HOBBY_DEFAULT_WORKS || [];
 
 const CONFIG = window.HOBBY_CONFIG || {};
 const photoBase = (CONFIG.photoBaseUrl || '').replace(/\/$/, '');
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const pic = (src, alt, cls = '') => `<img${cls ? ` class="${cls}"` : ''} src="${src}" alt="${escapeHtml(alt)}" loading="lazy">`;
-const img = (file, alt, cls = '') => pic(`images/${file}`, alt, cls);
 
-const localWorks = WORKS.map((w) => ({ ...w, photos: w.photos.map((f) => ({ full: `images/${f}`, thumb: `images/${f}` })) }));
-let allWorks = localWorks;
-
-const readField = (field) => {
-  if (!field) return '';
-  if ('stringValue' in field) return field.stringValue;
-  if ('timestampValue' in field) return field.timestampValue;
-  if ('arrayValue' in field) return (field.arrayValue.values || []).map(readField);
-  if ('mapValue' in field) {
-    return Object.fromEntries(Object.entries(field.mapValue.fields || {}).map(([k, v]) => [k, readField(v)]));
-  }
-  return '';
-};
-
-const loadRemoteWorks = async () => {
-  const { projectId, apiKey } = CONFIG.firebase || {};
-  if (!window.HOBBY_CONFIG) {
-    console.warn('[취미공작소] config.js를 불러오지 못했어요. index.html에 config.js가 연결되어 있는지 확인해 주세요.');
-    return;
-  }
-  if (!projectId || !photoBase) {
-    console.warn('[취미공작소] config.js의 projectId 또는 photoBaseUrl이 비어 있어요.');
-    return;
-  }
-  try {
-    const res = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/works?pageSize=300${apiKey ? `&key=${apiKey}` : ''}`);
-    if (!res.ok) {
-      console.warn(`[취미공작소] 작업물을 불러오지 못했어요 (${res.status}). Firestore 보안 규칙의 읽기 권한을 확인해 주세요.`);
-      return;
-    }
-    const data = await res.json();
-    const remote = (data.documents || []).map((d) => {
-      const f = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, readField(v)]));
-      return {
-        id: d.name.split('/').pop(),
-        kind: f.kind,
-        title: f.title,
-        desc: f.desc,
-        createdAt: f.createdAt || '',
-        photos: (f.photos || []).map((p) => ({ full: `${photoBase}/${p.full}`, thumb: `${photoBase}/${p.thumb}` }))
-      };
-    }).filter((w) => w.photos.length && KINDS[w.kind]);
-    remote.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-    allWorks = [...remote, ...localWorks];
-    const section = location.hash.replace(/^#/, '').split('/')[0];
-    if (section === 'works' || section === 'case') route();
-  } catch (error) {
-    console.warn(error);
-  }
-};
-
-const classList = document.querySelector('[data-class-list]');
-if (classList) {
-  classList.innerHTML = CLASSES.map((c) => `
-    <li><a class="tile" href="#class/${c.id}">${img(c.cover, c.name, 'tile__img')}<span class="tile__name">${c.name}</span></a></li>`).join('');
-}
-
-const worksList = document.querySelector('[data-works-list]');
-const renderWorks = (filter) => {
-  const list = filter && filter !== 'all' ? allWorks.filter((w) => w.kind === filter) : allWorks;
-  worksList.innerHTML = list.map((w) => `
-    <li><a class="tile" href="#case/${w.id}">${pic(w.photos[0].thumb, w.title, 'tile__img')}<span class="tile__name">${escapeHtml(w.title)}</span><span class="tile__meta">${KINDS[w.kind]}</span></a></li>`).join('');
-  document.querySelectorAll('[data-filter]').forEach((el) => {
-    el.classList.toggle('is-on', el.dataset.filter === (filter || 'all'));
-  });
-};
-
-const classDetail = document.querySelector('[data-class-detail]');
-const renderClass = (id) => {
-  const c = CLASSES.find((item) => item.id === id);
-  if (!c) return false;
-  classDetail.innerHTML = `
-    <div class="detail__photos">${c.photos.map((p) => img(p, c.name)).join('')}</div>
-    <div class="detail__text">
-      <a class="back" href="#class">클래스</a>
-      <h2 class="detail__title">${c.name}</h2>
-      <p class="detail__desc">${c.desc}</p>
-      <ul class="detail__points">${c.points.map((p) => `<li>${p}</li>`).join('')}</ul>
-      <a class="cta" href="${NAVER}" target="_blank" rel="noopener"><span class="naver-mark" aria-hidden="true">N</span>진행 중인 클래스 보기</a>
-    </div>`;
-  return true;
-};
-
-const caseDetail = document.querySelector('[data-case-detail]');
-const renderCase = (id) => {
-  const w = allWorks.find((item) => item.id === id);
-  if (!w) return false;
-  caseDetail.innerHTML = `
-    <div class="detail__photos">${w.photos.map((p) => pic(p.full, w.title)).join('')}</div>
-    <div class="detail__text">
-      <a class="back" href="#works/${w.kind}">${KINDS[w.kind]}</a>
-      <h2 class="detail__title">${escapeHtml(w.title)}</h2>
-      <p class="detail__desc">${escapeHtml(w.desc || '')}</p>
-      <a class="cta" href="${KAKAO}" target="_blank" rel="noopener" data-ask="${w.id}">${CTA_LABELS[w.kind] || '이런 걸 만들고 싶어요'}</a>
-      <p class="detail__note">누르면 이 작업물 링크가 복사돼요. 카톡 창에 붙여넣어 보내주세요.</p>
-    </div>`;
-  return true;
-};
-
-const toast = document.createElement('p');
-toast.className = 'toast';
-toast.setAttribute('role', 'status');
-document.body.appendChild(toast);
+const pages = [...document.querySelectorAll('.page')];
+const navLinks = [...document.querySelectorAll('[data-nav]')];
+const drawer = document.getElementById('drawer');
+const menuBtn = document.querySelector('[data-menu]');
+const worksList = document.querySelector('[data-works]');
+const zoomBox = document.querySelector('[data-zoom-box]');
+const zoomImg = document.querySelector('[data-zoom-img]');
+const zoomCap = document.querySelector('[data-zoom-cap]');
+const zoomDesc = document.querySelector('[data-zoom-desc]');
+const toast = document.querySelector('[data-toast]');
+const askBox = document.querySelector('[data-ask-box]');
+const askTitle = document.querySelector('[data-ask-title]');
+const askDesc = document.querySelector('[data-ask-desc]');
+const askText = document.querySelector('[data-ask-text]');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let allWorks = LOCAL_WORKS;
+let pendingCase = '';
 let toastTimer;
-const showToast = (text) => {
-  toast.textContent = text;
+
+const setMenu = (open) => {
+  if (!drawer || !menuBtn) return;
+  drawer.hidden = !open;
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuBtn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+};
+
+const showToast = (message) => {
+  if (!toast) return;
+  toast.textContent = message;
   toast.classList.add('is-on');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('is-on'), 3200);
+  toastTimer = setTimeout(() => toast.classList.remove('is-on'), 2800);
 };
 
 const copyText = async (text) => {
@@ -166,117 +51,326 @@ const copyText = async (text) => {
     await navigator.clipboard.writeText(text);
     return true;
   } catch (error) {
-    const area = document.createElement('textarea');
-    area.value = text;
-    area.setAttribute('readonly', '');
-    area.style.position = 'fixed';
-    area.style.opacity = '0';
-    document.body.appendChild(area);
-    area.select();
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.appendChild(field);
+    field.select();
     const ok = document.execCommand('copy');
-    area.remove();
+    field.remove();
     return ok;
   }
 };
 
-document.addEventListener('click', (event) => {
-  const ask = event.target.closest('[data-ask]');
-  if (!ask) return;
-  const w = allWorks.find((item) => item.id === ask.dataset.ask);
-  if (!w) return;
-  const url = `${location.origin}${location.pathname}#case/${w.id}`;
-  const message = `[${w.title}] ${ASK_MESSAGES[w.kind] || '이런 걸 만들고 싶어요!'}\n${url}`;
-  copyText(message).then((ok) => {
-    if (ok) showToast('링크를 복사했어요. 카톡에 붙여넣어 주세요.');
+const zoomDots = document.querySelector('[data-zoom-dots]');
+let zoomPhotos = [];
+
+const showZoomPhoto = (i) => {
+  zoomImg.src = zoomPhotos[i];
+  if (!zoomDots) return;
+  [...zoomDots.children].forEach((d, k) => {
+    d.classList.toggle('is-on', k === i);
+    d.setAttribute('aria-current', k === i ? 'true' : 'false');
   });
+};
+
+const openZoom = (src, caption, desc, list) => {
+  if (!zoomBox || typeof zoomBox.showModal !== 'function') return;
+  zoomPhotos = list && list.length ? list : [src];
+  zoomImg.alt = caption;
+  zoomCap.textContent = caption;
+  if (zoomDesc) zoomDesc.textContent = desc || '';
+  if (zoomDots) {
+    zoomDots.hidden = zoomPhotos.length < 2;
+    zoomDots.innerHTML = zoomPhotos.length < 2 ? '' : zoomPhotos.map((_, i) => `<button class="hero__dot" type="button" data-zoom-to="${i}" aria-label="사진 ${i + 1} / ${zoomPhotos.length}"></button>`).join('');
+  }
+  showZoomPhoto(0);
+  if (!zoomBox.open) zoomBox.showModal();
+};
+
+const openWork = (id) => {
+  const work = allWorks.find((w) => w.id === id);
+  if (!work) return false;
+  openZoom(work.photo, work.title, work.desc, work.photos);
+  return true;
+};
+
+const workCard = (w, n) => `
+          <li class="work photo-frame" data-page="${Math.floor(n / 8)}" style="--c:${(n % 4) + 1};--r:${Math.floor((n % 8) / 4) + 1}">
+            <span class="tape tape--sage work__tape" aria-hidden="true"></span>
+            <button class="work__img" type="button" data-zoom data-work="${escapeHtml(w.id)}" data-src="${escapeHtml(w.photo)}" data-cap="${escapeHtml(w.title)}" data-desc="${escapeHtml(w.desc || '')}" aria-label="${escapeHtml(w.title)} 크게 보기">
+              <img src="${escapeHtml(w.thumb || w.photo)}" alt="${escapeHtml(w.title)}" loading="lazy">
+              <span class="work__kind">${KINDS[w.kind]}</span>
+            </button>
+            <h3 class="work__title">${escapeHtml(w.title)}</h3>
+            <a class="work__ask" href="${KAKAO}" target="_blank" rel="noopener" data-ask="${escapeHtml(w.id)}">이런 걸 만들고 싶어요 →</a>
+          </li>`;
+
+const renderWorks = () => {
+  if (worksList) {
+    worksList.innerHTML = allWorks.length ? allWorks.map(workCard).join('') : '<li class="works__empty">새로운 작업물이 곧 올라와요</li>';
+  }
+  updateSlide();
+};
+
+const readField = (field) => {
+  if (!field) return '';
+  if ('stringValue' in field) return field.stringValue;
+  if ('timestampValue' in field) return field.timestampValue;
+  if ('arrayValue' in field) return (field.arrayValue.values || []).map(readField);
+  if ('mapValue' in field) return Object.fromEntries(Object.entries(field.mapValue.fields || {}).map(([k, v]) => [k, readField(v)]));
+  return '';
+};
+
+const loadRemoteWorks = async () => {
+  const { projectId, apiKey } = CONFIG.firebase || {};
+  if (!projectId || !photoBase) return;
+  try {
+    const base = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
+    const key = apiKey ? `key=${apiKey}` : '';
+    const [res, metaRes] = await Promise.all([
+      fetch(`${base}/works?pageSize=300${key ? `&${key}` : ''}`),
+      fetch(`${base}/meta/counter${key ? `?${key}` : ''}`).catch(() => null)
+    ]);
+    if (!res.ok) {
+      console.warn(`[취미공작소] 작업물을 불러오지 못했어요 (${res.status}).`);
+      return;
+    }
+    let seeded = false;
+    if (metaRes && metaRes.ok) {
+      const meta = await metaRes.json();
+      seeded = Boolean(meta.fields && meta.fields.seeded && meta.fields.seeded.booleanValue);
+    }
+    const data = await res.json();
+    const remote = (data.documents || []).map((d) => {
+      const f = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, readField(v)]));
+      const photos = f.photos || [];
+      return {
+        id: d.name.split('/').pop(),
+        kind: f.kind,
+        title: f.title,
+        desc: f.desc,
+        createdAt: f.createdAt || '',
+        photo: photos[0] ? `${photoBase}/${photos[0].full}` : '',
+        thumb: photos[0] ? `${photoBase}/${photos[0].thumb}` : '',
+        photos: photos.map((p) => `${photoBase}/${p.full}`)
+      };
+    }).filter((w) => w.photo && KINDS[w.kind]);
+    if (!remote.length && !seeded) return;
+    remote.sort((a, b) => (KIND_ORDER[a.kind] - KIND_ORDER[b.kind]) || (a.createdAt < b.createdAt ? 1 : -1));
+    allWorks = remote;
+    renderWorks();
+    if (pendingCase && openWork(pendingCase)) pendingCase = '';
+  } catch (error) {
+    console.warn(error);
+  }
+};
+
+const stage = document.getElementById('stage');
+let currentId = '';
+let jumping = false;
+let jumpTimer;
+
+const resolve = (hash) => {
+  const [section, sub] = hash.replace(/^#/, '').split('/');
+  if (section === 'case' && sub) return { id: 'gallery', work: sub };
+  if (section === 'class') return { id: 'class' };
+  return { id: LEGACY[section] || section };
+};
+
+const markActive = (id) => {
+  const target = pages.find((p) => p.id === id) || pages[0];
+  if (target.id === currentId) return;
+  currentId = target.id;
+  pages.forEach((p) => p.classList.toggle('is-on', p === target));
+  navLinks.forEach((a) => {
+    const on = a.dataset.nav === target.id;
+    a.classList.toggle('is-on', on);
+    if (on) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+  document.title = target === pages[0] ? '취미공작소 | hobby atelier' : `${target.dataset.label} | 취미공작소`;
+  const hash = target === pages[0] ? location.pathname : `#${target.id}`;
+  if (`${location.pathname}${location.hash}` !== (target === pages[0] ? location.pathname : `${location.pathname}#${target.id}`)) history.replaceState(null, '', hash);
+};
+
+const goTo = (hash, smooth) => {
+  const { id, work } = resolve(hash);
+  const target = pages.find((p) => p.id === id) || pages[0];
+  setMenu(false);
+  jumping = true;
+  clearTimeout(jumpTimer);
+  jumpTimer = setTimeout(() => { jumping = false; }, smooth ? 900 : 50);
+  stage.scrollTo({ top: target.offsetTop, behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto' });
+  markActive(target.id);
+  if (work && !openWork(work)) pendingCase = work;
+};
+
+const showPage = (hash, smooth) => goTo(hash, smooth);
+
+let wheelLock = false;
+stage.addEventListener('wheel', (event) => {
+  if (event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+  if ((zoomBox && zoomBox.open) || (askBox && askBox.open)) return;
+  const dir = Math.sign(event.deltaY);
+  const top = stage.scrollTop;
+  const view = stage.clientHeight;
+  const cur = pages.find((p) => p.offsetTop <= top + 2 && top + 2 < p.offsetTop + p.offsetHeight) || pages[0];
+  if (dir > 0 && top + view < cur.offsetTop + cur.offsetHeight - 2) return;
+  if (dir < 0 && top > cur.offsetTop + 2) return;
+  event.preventDefault();
+  if (wheelLock) return;
+  const next = pages[pages.indexOf(cur) + dir];
+  if (!next) return;
+  wheelLock = true;
+  setTimeout(() => { wheelLock = false; }, 950);
+  jumping = true;
+  clearTimeout(jumpTimer);
+  jumpTimer = setTimeout(() => { jumping = false; }, 900);
+  const dest = dir < 0 ? Math.max(next.offsetTop, next.offsetTop + next.offsetHeight - view) : next.offsetTop;
+  stage.scrollTo({ top: dest, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  markActive(next.id);
+}, { passive: false });
+
+if ('IntersectionObserver' in window) {
+  const pageObserver = new IntersectionObserver((entries) => {
+    if (jumping) return;
+    entries.forEach((entry) => { if (entry.isIntersecting) markActive(entry.target.id); });
+  }, { root: stage, rootMargin: '-45% 0px -45% 0px' });
+  pages.forEach((p) => pageObserver.observe(p));
+}
+
+document.addEventListener('click', async (event) => {
+  const pageLink = event.target.closest('a[href^="#"]');
+  if (pageLink) {
+    const hash = pageLink.getAttribute('href');
+    if (pages.some((p) => p.id === resolve(hash).id)) {
+      event.preventDefault();
+      showPage(hash, true);
+      return;
+    }
+  }
+
+  if (event.target.closest('[data-menu]')) {
+    setMenu(drawer.hidden);
+    return;
+  }
+
+  const ask = event.target.closest('[data-ask]');
+  if (ask) {
+    event.preventDefault();
+    const work = allWorks.find((w) => w.id === ask.dataset.ask);
+    if (!work) return;
+    const url = `${location.origin}${location.pathname}#case/${work.id}`;
+    const message = `[${work.title}] ${ASK_MESSAGES[work.kind] || '이런 걸 만들고 싶어요!'}\n${url}`;
+    const ok = await copyText(message);
+    if (askTitle) askTitle.textContent = ok ? '작업물 이름과 링크를 복사했어요' : '아래 내용을 복사해 주세요';
+    if (askDesc) askDesc.textContent = ok ? '카톡 채팅창에 붙여넣어 보내 주세요' : '길게 눌러 복사한 뒤 카톡에 붙여넣어 주세요';
+    if (askText) askText.textContent = message;
+    if (askBox && typeof askBox.showModal === 'function') askBox.showModal();
+    else window.open(KAKAO, '_blank', 'noopener');
+    return;
+  }
+
+  if (askBox && askBox.open && (event.target.closest('[data-ask-close]') || event.target.closest('[data-ask-go]') || event.target === askBox)) {
+    if (!event.target.closest('[data-ask-go]')) event.preventDefault();
+    askBox.close();
+    return;
+  }
+
+  const zoom = event.target.closest('[data-zoom]');
+  if (zoom) {
+    if (zoom.dataset.work && openWork(zoom.dataset.work)) return;
+    const img = zoom.querySelector('img.is-on') || zoom.querySelector('img');
+    openZoom(zoom.dataset.src || img.src, zoom.dataset.cap || img.alt, zoom.dataset.desc);
+    return;
+  }
+
+  const zoomTo = event.target.closest('[data-zoom-to]');
+  if (zoomTo) {
+    showZoomPhoto(Number(zoomTo.dataset.zoomTo));
+    return;
+  }
+
+  if (zoomBox && zoomBox.open && (event.target.closest('[data-zoom-close]') || event.target === zoomBox)) {
+    zoomBox.close();
+    return;
+  }
+
+  const copyBtn = event.target.closest('[data-copy]');
+  if (copyBtn) {
+    const ok = await copyText(copyBtn.dataset.copy);
+    showToast(ok ? '공방 주소를 복사했어요' : '주소를 길게 눌러 복사해 주세요');
+  }
 });
 
-const views = document.querySelectorAll('[data-view]');
-const navLinks = document.querySelectorAll('.top__nav a');
-
-const show = (name) => {
-  views.forEach((v) => { v.hidden = v.dataset.view !== name; });
-  document.body.classList.toggle('is-home', name === 'home');
-};
-
-const route = () => {
-  const [section, sub] = location.hash.replace(/^#/, '').split('/');
-  let active = '';
-  if (section === 'class' && sub && renderClass(sub)) {
-    show('class-detail');
-    active = 'class';
-  } else if (section === 'class') {
-    show('class');
-    active = 'class';
-  } else if (section === 'works') {
-    renderWorks(sub);
-    show('works');
-    active = KINDS[sub] ? `works/${sub}` : '';
-  } else if (section === 'case' && sub && renderCase(sub)) {
-    show('case');
-    const work = allWorks.find((item) => item.id === sub);
-    active = work ? `works/${work.kind}` : '';
-  } else if (section === 'visit') {
-    show('visit');
-    active = 'visit';
-  } else {
-    show('home');
+const workDots = document.querySelector('[data-work-dots]');
+let workPageIndex = 0;
+const showWorkPage = (index, animate) => {
+  if (!worksList) return;
+  const cards = [...worksList.children];
+  const count = Math.max(1, Math.ceil(cards.length / 8));
+  workPageIndex = Math.min(Math.max(index, 0), count - 1);
+  cards.forEach((li, i) => {
+    const on = Math.floor(i / 8) === workPageIndex;
+    li.classList.toggle('is-off', !on);
+    li.classList.toggle('is-in', on && animate && !reduceMotion.matches);
+  });
+  if (!workDots) return;
+  workDots.hidden = count < 2;
+  if (workDots.children.length !== count) {
+    workDots.innerHTML = Array.from({ length: count }, (_, i) => `<button class="hero__dot" type="button" data-work-page="${i}" aria-label="작업물 ${i + 1} / ${count}"></button>`).join('');
   }
-  navLinks.forEach((a) => a.classList.toggle('is-on', a.getAttribute('href') === `#${active}`));
-  window.scrollTo(0, 0);
+  [...workDots.children].forEach((d, i) => {
+    d.classList.toggle('is-on', i === workPageIndex);
+    d.setAttribute('aria-current', i === workPageIndex ? 'true' : 'false');
+  });
 };
+function updateSlide() { showWorkPage(0, false); }
+if (workDots) workDots.addEventListener('click', (event) => {
+  const dot = event.target.closest('[data-work-page]');
+  if (dot) showWorkPage(Number(dot.dataset.workPage), true);
+});
+updateSlide();
 
-window.addEventListener('hashchange', route);
-route();
+const sliders = [...document.querySelectorAll('.page--hero')].map((page) => {
+  const slides = [...page.querySelectorAll('.hero__slide')];
+  const dotBtns = [...page.querySelectorAll('[data-slide-to]')];
+  if (slides.length < 2) return null;
+  const state = { page, slides, dotBtns, index: 0, timer: 0, hover: false };
+  state.go = (i) => {
+    state.index = (i + slides.length) % slides.length;
+    slides.forEach((s, k) => s.classList.toggle('is-on', k === state.index));
+    dotBtns.forEach((d, k) => {
+      d.classList.toggle('is-on', k === state.index);
+      d.setAttribute('aria-current', k === state.index ? 'true' : 'false');
+    });
+  };
+  dotBtns.forEach((d) => d.addEventListener('click', () => { state.go(Number(d.dataset.slideTo)); restart(state); }));
+  const photo = page.querySelector('.hero__photo');
+  photo.addEventListener('pointerenter', () => { state.hover = true; });
+  photo.addEventListener('pointerleave', () => { state.hover = false; });
+  return state;
+}).filter(Boolean);
+
+function restart(state) {
+  clearInterval(state.timer);
+  if (reduceMotion.matches) return;
+  state.timer = setInterval(() => {
+    if (state.hover || !state.page.classList.contains('is-on') || (zoomBox && zoomBox.open)) return;
+    state.go(state.index + 1);
+  }, 4000);
+}
+sliders.forEach(restart);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && drawer && !drawer.hidden) setMenu(false);
+});
+
+window.addEventListener('hashchange', () => showPage(location.hash, true));
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+showPage(location.hash, false);
 loadRemoteWorks();
-
-const lightbox = document.querySelector('.lightbox');
-if (lightbox) {
-  const big = lightbox.querySelector('.lightbox__img');
-  let pushed = false;
-  document.addEventListener('click', (event) => {
-    const photo = event.target.closest('.detail__photos img');
-    if (!photo) return;
-    big.src = photo.src;
-    big.alt = photo.alt;
-    lightbox.showModal();
-    history.pushState({ layer: 'lightbox' }, '', location.hash || '#');
-    pushed = true;
-  });
-  const close = () => { if (pushed) history.back(); else lightbox.close(); };
-  lightbox.querySelector('[data-lightbox-close]').addEventListener('click', close);
-  lightbox.addEventListener('click', (event) => { if (event.target === lightbox) close(); });
-  lightbox.addEventListener('cancel', (event) => { event.preventDefault(); close(); });
-  window.addEventListener('popstate', () => {
-    if (lightbox.open) {
-      pushed = false;
-      lightbox.close();
-    }
-  });
-}
-
-const home = document.querySelector('.view--home');
-const paintLayer = document.querySelector('.paint-layer');
-const canPaint = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-  && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-if (home && paintLayer && canPaint) {
-  const paints = ['#E5533D', '#3A6FD8', '#3E9B5B', '#F0B429', '#E46A8C', '#3A2F5E'];
-  let last = 0;
-  home.addEventListener('pointermove', (event) => {
-    const now = performance.now();
-    if (now - last < 55) return;
-    last = now;
-    const rect = home.getBoundingClientRect();
-    const size = 5 + Math.random() * 7;
-    const dab = document.createElement('span');
-    dab.className = 'paint-dab';
-    dab.style.width = `${size}px`;
-    dab.style.height = `${size * (0.8 + Math.random() * 0.3)}px`;
-    dab.style.left = `${event.clientX - rect.left + (Math.random() * 10 - 5)}px`;
-    dab.style.top = `${event.clientY - rect.top + (Math.random() * 10 - 5)}px`;
-    dab.style.background = paints[Math.floor(Math.random() * paints.length)];
-    dab.addEventListener('animationend', () => dab.remove());
-    paintLayer.appendChild(dab);
-  });
-}

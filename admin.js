@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, query, orderBy, getDocs, setDoc, updateDoc, deleteDoc, doc, serverTimestamp, runTransaction } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, query, orderBy, getDocs, getDoc, setDoc, updateDoc, deleteDoc, doc, serverTimestamp, runTransaction, Timestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const CONFIG = window.HOBBY_CONFIG;
 const app = initializeApp(CONFIG.firebase);
@@ -31,6 +31,13 @@ const progressEl = $('[data-progress]');
 const progressBar = $('[data-progress-bar]');
 const progressText = $('[data-progress-text]');
 
+const seedBox = $('[data-seed]');
+const seedBtn = $('[data-seed-btn]');
+const seedProgress = $('[data-seed-progress]');
+const seedBar = $('[data-seed-bar]');
+const seedText = $('[data-seed-text]');
+const counterRef = doc(db, 'meta', 'counter');
+
 const photoUrl = (key) => `${CONFIG.photoBaseUrl.replace(/\/$/, '')}/${key}`;
 
 let works = [];
@@ -50,8 +57,12 @@ const loadWorks = async () => {
   try {
     const snap = await getDocs(query(worksRef, orderBy('createdAt', 'desc')));
     works = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const order = { piece: 0, goods: 1, gift: 2 };
+    works.sort((x, y) => (order[x.kind] ?? 9) - (order[y.kind] ?? 9));
     renderList();
     setMessage(listMessage, works.length ? '' : '아직 올린 작업이 없어요.');
+    const counter = await getDoc(counterRef);
+    seedBox.hidden = Boolean(counter.exists() && counter.data().seeded) || !(window.HOBBY_DEFAULT_WORKS || []).length;
   } catch (error) {
     setMessage(listMessage, '목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.', true);
   }
@@ -330,7 +341,6 @@ editorForm.addEventListener('submit', async (event) => {
     if (editing) {
       await updateDoc(doc(db, 'works', editing.id), { ...data, updatedAt: serverTimestamp() });
     } else {
-      const counterRef = doc(db, 'meta', 'counter');
       const no = await runTransaction(db, async (tx) => {
         const snap = await tx.get(counterRef);
         const next = (snap.exists() ? snap.data().works || 0 : 0) + 1;
@@ -352,6 +362,54 @@ editorForm.addEventListener('submit', async (event) => {
     saveBtn.disabled = false;
     saveBtn.classList.remove('is-loading');
     editorForm.classList.remove('is-busy');
+  }
+});
+
+const nextNo = () => runTransaction(db, async (tx) => {
+  const snap = await tx.get(counterRef);
+  const next = (snap.exists() ? snap.data().works || 0 : 0) + 1;
+  tx.set(counterRef, { works: next }, { merge: true });
+  return next;
+});
+
+seedBtn.addEventListener('click', async () => {
+  const defaults = window.HOBBY_DEFAULT_WORKS || [];
+  if (!defaults.length || !window.confirm(`기본 작업물 ${defaults.length}개를 관리자 목록으로 불러올까요?`)) return;
+  seedBtn.disabled = true;
+  seedProgress.hidden = false;
+  const base = Date.now();
+  try {
+    for (let i = defaults.length - 1, done = 0; i >= 0; i -= 1, done += 1) {
+      const w = defaults[i];
+      seedBar.style.width = `${(done / defaults.length) * 100}%`;
+      seedText.textContent = `'${w.title}' 불러오는 중 (${done + 1}/${defaults.length})`;
+      const res = await fetch(w.photo, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`photo ${res.status}`);
+      const file = await res.blob();
+      const [fullBlob, thumbBlob] = await Promise.all([resize(file, FULL_SIZE), resize(file, THUMB_SIZE)]);
+      const full = await upload(fullBlob, newKey('full'));
+      const thumb = await upload(thumbBlob, newKey('thumb'));
+      const no = await nextNo();
+      await setDoc(doc(db, 'works', String(no)), {
+        kind: w.kind,
+        title: w.title,
+        desc: w.desc || '',
+        photos: [{ full, thumb }],
+        no,
+        createdAt: Timestamp.fromMillis(base + done * 1000)
+      });
+    }
+    await setDoc(counterRef, { seeded: true }, { merge: true });
+    seedBar.style.width = '100%';
+    seedText.textContent = '다 불러왔어요.';
+    await loadWorks();
+  } catch (error) {
+    console.error(error);
+    seedText.textContent = '';
+    setMessage(listMessage, `기본 작업물을 다 불러오지 못했어요. 이미 불러온 것은 목록에 남아 있어요. ${explainError(error)}`, true);
+  } finally {
+    seedBtn.disabled = false;
+    setTimeout(() => { seedProgress.hidden = true; }, 1200);
   }
 });
 

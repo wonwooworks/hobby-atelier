@@ -1,11 +1,11 @@
 :root {
-  --c-brand: #DCD2F2;
-  --c-paper: #F8F6FB;
+  --c-brand: #D9E3CF;
+  --c-paper: #FAF6F0;
   --c-white: #FFFFFF;
-  --c-ink: #3A2F5E;
-  --c-ink-deep: #261E42;
-  --c-ink-soft: #6B6388;
-  --c-hair: rgba(58, 47, 94, 0.16);
+  --c-ink: #3E4A35;
+  --c-ink-deep: #2C3626;
+  --c-ink-soft: #66735B;
+  --c-hair: rgba(62, 74, 53, 0.16);
   --c-danger: #C0392B;
   --radius: 12px;
 }
@@ -328,7 +328,7 @@ img {
 }
 
 .editor::backdrop {
-  background: rgba(58, 47, 94, 0.45);
+  background: rgba(62, 74, 53, 0.45);
 }
 
 .editor__box {
@@ -464,4 +464,40 @@ img {
     border-radius: var(--radius) var(--radius) 0 0;
     padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   }
+}
+
+.guide {
+  margin: 0.9rem 0 0.4rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  background: #F3F6EF;
+  color: #4E5A44;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.field__hint {
+  display: block;
+  margin-top: 0.3rem;
+  color: #66735B;
+  font-size: 0.8rem;
+}
+
+.seed {
+  display: grid;
+  gap: 0.7rem;
+  justify-items: start;
+  padding: 1rem;
+  border: 1.5px dashed rgba(62, 74, 53, 0.3);
+  border-radius: 12px;
+  background: #FFFFFF;
+}
+
+.seed[hidden] {
+  display: none;
+}
+
+.seed__text {
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
